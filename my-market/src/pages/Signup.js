@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, } from "firebase/auth";
 import { fireAuth } from "../firebase";
 
 export default function Signup() {
@@ -15,7 +15,9 @@ export default function Signup() {
     setError("");
 
     try {
-      await createUserWithEmailAndPassword(fireAuth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
+      await sendEmailVerification(userCredential.user);
+      alert("登録確認メールを送信しました。メールを確認してください。");
       navigate("/");
     } catch (err) {
       console.error(err);

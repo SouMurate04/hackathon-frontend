@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Link to="/about">About</Link> |{" "}
         <Link to="/login">Login</Link> |{" "}
         <Link to="/signup">Signup</Link>
+        <Link to="/reset-password">パスワードを忘れた方はこちら</Link>
       </nav>
 
       <Routes>
@@ -30,6 +32,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );
