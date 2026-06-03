@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../firebase";
+import { fireAuth } from "../firebase";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ export default function ResetPassword() {
     setError("");
 
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(fireAuth, email);
       setMessage("パスワード再設定用のメールを送信しました。");
     } catch (err) {
       console.error(err);
