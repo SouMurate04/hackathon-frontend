@@ -46,7 +46,8 @@ export default function Login() {
       </form>
 
         <p>
-            アカウントがない場合は <Link to="/signup">新規作成</Link>
+            <div>アカウントがない場合は <Link to="/signup">新規作成</Link></div>
+            <div>パスワードを忘れた方は<Link to="/reset-password">こちら</Link></div>
         </p>
 
       {error && <p>{error}</p>}
