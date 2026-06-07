@@ -17,29 +17,28 @@ export default function Signup() {
     setError("");
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
-      
       const response = await fetch(`${API_BASE_URL}/user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        email: userCredential.user.email,
-      }),
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error("バックエンドへのユーザー登録に失敗しました");
-    }
-      
+      if (!response.ok) {
+        throw new Error("バックエンドへのユーザー登録に失敗しました");
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);     
       await sendEmailVerification(userCredential.user);
       alert("登録確認メールを送信しました。メールを確認してください。");
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError(`${API_BASE_URL}...アカウント作成に失敗しました`);
+      setError("アカウント作成に失敗しました");
     }
   };
 
