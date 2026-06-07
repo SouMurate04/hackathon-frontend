@@ -17,6 +17,11 @@ export default function Signup() {
     setError("");
 
     try {
+
+      if(name == NULL || email == NULL || password == NULL){
+        throw new Error("値の入力が不十分です");
+      }
+
       const response = await fetch(`${API_BASE_URL}/user`, {
         method: "POST",
         headers: {
@@ -38,7 +43,7 @@ export default function Signup() {
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("アカウント作成に失敗しました");
+      setError(err);
     }
   };
 
