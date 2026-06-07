@@ -29,9 +29,9 @@ export default function MyPage() {
             }
             
             if(wantSetPassword){
-                if(oldPassword != user.password){
+                if(oldPassword !== user.password){
                     throw new Error("変更前のパスワードが間違っています");
-                }else if(password != password2){
+                }else if(password !== password2){
                     throw new Error("新しいパスワードが一致しません");
                 }
             }
@@ -60,6 +60,8 @@ export default function MyPage() {
             }
 
             await updateProfile(user, newProfile);
+            alert("プロフィールを変更しました");
+            navigate("/mypage");
         } catch (err) {
             console.error(err);
             setError(err);
@@ -70,7 +72,7 @@ export default function MyPage() {
     <div>
       <div>
         <h1>Edit Profile</h1>
-        <form onSubmit="handleEditProfile">
+        <form onSubmit={handleEditProfile}>
             <input type="text" placeholder="ニックネーム" value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -101,6 +103,8 @@ export default function MyPage() {
 
             <button type="submit">変更を確定</button>
         </form>
+
+        {error && <p>{error}</p>}
       </div>
     </div>
   );
