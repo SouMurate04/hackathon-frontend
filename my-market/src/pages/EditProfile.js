@@ -65,7 +65,7 @@ export default function MyPage() {
             navigate("/mypage");
         } catch (err) {
             console.error(err);
-            setError(err);
+            setError(err.message);
         }
     };
 

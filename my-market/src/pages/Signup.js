@@ -23,7 +23,8 @@ export default function Signup() {
       }
 
       const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);     
-      
+      await updateProfile(userCredential.user, { displayName: name, });
+
       const token = await userCredential.user.getIdToken();
       const response = await fetch(`${API_BASE_URL}/user`, {
         method: "POST",
@@ -40,15 +41,13 @@ export default function Signup() {
       if (!response.ok) {
         throw new Error("バックエンドへのユーザー登録に失敗しました");
       }
-
-      await updateProfile(userCredential.user, { displayName: name, });
       
       await sendEmailVerification(userCredential.user);
       alert("登録確認メールを送信しました。メールを確認してください。");
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError(err);
+      setError(err.message);
     }
   };
 
