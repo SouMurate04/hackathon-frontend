@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fireAuth } from "../firebase";
 
 export default function Header() {
 
   const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    onAuthStateChanged(fireAuth, user => {
+    const unsubscribe = onAuthStateChanged(fireAuth, user => {
       setLoginUser(user);
     });
+
+    return unsubscribe;
   }, []);
+
+  const handleLogout = async () => {
+    await signOut(fireAuth);
+    navigate("/");
+  };
 
 
   return (
@@ -29,6 +38,23 @@ export default function Header() {
 
           {" | "}
           <Link to="/sell">出品</Link>
+
+          {" | "}
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#61dafb",
+              cursor: "pointer",
+              font: "inherit",
+              padding: 0,
+              textDecoration: "underline",
+            }}
+          >
+            Logout
+          </button>
         </>
       ) : (
         <>
