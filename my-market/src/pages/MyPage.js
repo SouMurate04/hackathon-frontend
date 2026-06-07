@@ -1,8 +1,16 @@
+import { fireAuth } from "../firebase";
+
 export default function MyPage() {
+
+  const user = fireAuth.currentUser;
+
   return (
     <div>
-      <h1>About</h1>
-      <p>このサイトについて。</p>
+      <div>
+        <h1>User Information</h1>
+        <p>ニックネーム:{user.displayName}</p>
+        <p>メールアドレス:{user.email}</p>
+      </div>
     </div>
   );
 }
