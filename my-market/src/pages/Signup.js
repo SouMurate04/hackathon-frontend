@@ -37,7 +37,7 @@ export default function Signup() {
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("アカウント作成に失敗しました");
+      setError(`${API_BASE_URL}...アカウント作成に失敗しました`);
     }
   };
 
