@@ -22,14 +22,18 @@ export default function Signup() {
         throw new Error("値の入力が不十分です");
       }
 
+      const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);     
+      
+      const token = await userCredential.user.getIdToken();
       const response = await fetch(`${API_BASE_URL}/user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: name,
-          email: email,
+          name: userCredential.user.displayName,
+          email: userCredential.user.email,
         }),
       });
 
@@ -37,8 +41,6 @@ export default function Signup() {
         throw new Error("バックエンドへのユーザー登録に失敗しました");
       }
 
-      const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);     
-      
       await updateProfile(userCredential.user, { displayName: name, });
       
       await sendEmailVerification(userCredential.user);
@@ -55,24 +57,15 @@ export default function Signup() {
       <h1>新規作成</h1>
 
       <form onSubmit={handleSignup}>
-        <input
-          type="text"
-          placeholder="ニックネーム"
-          value={name}
+        <input type="text" placeholder="ニックネーム" value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
+        <input type="email" placeholder="メールアドレス" value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
+        <input type="password" placeholder="パスワード" value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
