@@ -31,7 +31,7 @@ export default function Header() {
       {loginUser ? (
         <>
           {" | "}
-          <Link to="/mypage">{loginUser.displayName}さん</Link>
+          <Link to="/mypage">{loginUser.displayName || "ユーザー"}さん</Link>
 
           {" | "}
           <Link to="/notifications">Notifications</Link>
