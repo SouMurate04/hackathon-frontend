@@ -1,5 +1,4 @@
 import { fireAuth } from "../firebase";
-import { Link } from "react-router-dom";
 
 export default function MyPage() {
 
@@ -11,7 +10,6 @@ export default function MyPage() {
         <h1>User Information</h1>
         <p>ニックネーム:{user.displayName}</p>
         <p>メールアドレス:{user.email}</p>
-        <p><Link to="/mypage/edit-profile">プロフィール編集</Link></p>
       </div>
     </div>
   );
