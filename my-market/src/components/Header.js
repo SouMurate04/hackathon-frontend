@@ -6,6 +6,8 @@ import { fireAuth } from "../firebase";
 
 export default function Header() {
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+
   const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
   const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ export default function Header() {
       {loginUser ? (
         <>
           {" | "}
-          <Link to="/mypage">{loginUser.email}さん</Link>
+          <Link to="/mypage">{loginUser.displayName}さん</Link>
 
           {" | "}
           <Link to="/notifications">Notifications</Link>
