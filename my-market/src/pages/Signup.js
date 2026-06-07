@@ -18,7 +18,7 @@ export default function Signup() {
 
     try {
 
-      if(name == NULL || email == NULL || password == NULL){
+      if(name == null || email == null || password == null){
         throw new Error("値の入力が不十分です");
       }
 
