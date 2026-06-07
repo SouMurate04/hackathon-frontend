@@ -1,4 +1,4 @@
-export default function About() {
+export default function MyPage() {
   return (
     <div>
       <h1>About</h1>
