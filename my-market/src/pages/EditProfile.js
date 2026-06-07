@@ -59,7 +59,7 @@ export default function MyPage() {
                 newProfile.password = password;
             }
 
-            await updateProfile(userCredential.user, newProfile);
+            await updateProfile(user, newProfile);
         } catch (err) {
             console.error(err);
             setError(err);
