@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, } from "firebase
 import { fireAuth } from "../firebase";
 
 export default function Signup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,6 +25,7 @@ export default function Signup() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        name: name,
         email: userCredential.user.email,
       }),
     });
@@ -46,6 +48,13 @@ export default function Signup() {
       <h1>新規作成</h1>
 
       <form onSubmit={handleSignup}>
+        <input
+          type="text"
+          placeholder="ニックネーム"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
         <input
           type="email"
           placeholder="メールアドレス"
