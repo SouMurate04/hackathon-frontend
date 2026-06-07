@@ -7,8 +7,9 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -16,6 +17,21 @@ export default function Signup() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
+      
+      const response = await fetch(`${API_BASE_URL}/user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userCredential.user.email,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("バックエンドへのユーザー登録に失敗しました");
+    }
+      
       await sendEmailVerification(userCredential.user);
       alert("登録確認メールを送信しました。メールを確認してください。");
       navigate("/");
