@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { auth } from "../firebase";
+import { fireAuth } from "../firebase";
 
 export default function Header() {
 
-  const user = auth.currentUser;
+  const user = fireAuth.currentUser;
 
   return (
     <header>
