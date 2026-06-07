@@ -1,19 +1,28 @@
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+
 import { Link } from "react-router-dom";
 import { fireAuth } from "../firebase";
 
 export default function Header() {
 
-  const user = fireAuth.currentUser;
+  const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
+  useEffect(() => {
+    onAuthStateChanged(fireAuth, user => {
+      setLoginUser(user);
+    });
+  }, []);
+
 
   return (
     <header>
 
       <Link to="/">Home</Link>
 
-      {user ? (
+      {loginUser ? (
         <>
           {" | "}
-          <Link to="/mypage">{user.email}さん</Link>
+          <Link to="/mypage">{loginUser.email}さん</Link>
 
           {" | "}
           <Link to="/notifications">Notifications</Link>
