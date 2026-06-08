@@ -7,21 +7,30 @@ import EditProfile from "./pages/EditProfile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
+import Sell from "./pages/Sell";
+
+import Loader from "./components/Loader";
 import Header from "./components/Header";
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
+    <Loader>
       <Header />
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/mypage/edit-profile" element={<EditProfile />} />
+        <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
+        <Route path="/mypage/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+
+        <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
+    </Loader>
     </BrowserRouter>
   );
 }
