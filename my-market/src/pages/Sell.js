@@ -76,7 +76,8 @@ export default function Sell(){
                 />
 
                 <button type="submit">出品</button>
-    </form>
+            </form>
+            {error && <p>{error}</p>}
         </div>
     );
 
