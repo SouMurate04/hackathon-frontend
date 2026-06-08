@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fireAuth } from "../firebase";
+
 
 export default function Sell(){
     const [image, setImage] = useState(null);
