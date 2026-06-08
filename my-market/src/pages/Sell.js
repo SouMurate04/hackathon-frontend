@@ -35,7 +35,8 @@ export default function Sell(){
             formData.append("description", description);
             formData.append("image", image);
             formData.append("category_id", 1);
-            formData.append("tags", ["テスト","ハッカソン"]);
+            formData.append("tags", "テスト");
+            formData.append("tags", "ハッカソン");
 
             const response = await fetch(`${API_BASE_URL}/sell`, {
             method: "POST",
