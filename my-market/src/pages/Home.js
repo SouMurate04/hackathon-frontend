@@ -33,6 +33,9 @@ export default function Home() {
           <div>{item.name}</div>
           <div>{item.price}</div>
           <div>{item.description}</div>
+          <div>{item.seller}</div>
+          <div>{item.category}</div>
+          <div>{item.posted_at}</div>
         </li>
       ))}</ul>
       </p>
