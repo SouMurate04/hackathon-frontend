@@ -6,21 +6,20 @@ export default function Home() {
 
   const [items, setItems] = useState([]);
 
-  const load_items = async () => {
-    const response = await fetch(`${REACT_APP_API_BASE_URL}/items`,
-      {
-        method: "GET",
-      });
-      const items = await response.json();
-      if (!response.ok) {
-        console.error(items);
-        alert("Error：" + JSON.stringify(items));
-        return;
-      }
-      setItems(items);
-  }
-
   useEffect(() => {
+    const load_items = async () => {
+      const response = await fetch(`${REACT_APP_API_BASE_URL}/browse`,
+        {
+          method: "GET",
+        });
+        const items_ret = await response.json();
+        if (!response.ok) {
+          console.error(items_ret);
+          alert("Error：" + JSON.stringify(items_ret));
+          return;
+        }
+        setItems(items_ret);
+    };
     load_items();
   }, []);
 
