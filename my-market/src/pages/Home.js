@@ -21,7 +21,7 @@ export default function Home() {
         setItems(items_ret);
     };
     load_items();
-  }, []);
+  }, [REACT_APP_API_BASE_URL]);
 
   return (
     <div>
