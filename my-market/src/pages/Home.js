@@ -13,7 +13,7 @@ export default function Home() {
       });
       const items = await response.json();
       if (!response.ok) {
-        console.error(history);
+        console.error(items);
         alert("Error：" + JSON.stringify(history));
         return;
       }
