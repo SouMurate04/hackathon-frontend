@@ -14,7 +14,7 @@ export default function Home() {
       const items = await response.json();
       if (!response.ok) {
         console.error(items);
-        alert("Error：" + JSON.stringify(history));
+        alert("Error：" + JSON.stringify(items));
         return;
       }
       setItems(items);
