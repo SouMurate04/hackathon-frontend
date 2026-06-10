@@ -14,18 +14,18 @@ export default function UserPage(){
     useEffect(() => {
         const load_user = async () =>{
             try{
-                const response = await fetch(`${REACT_APP_API_BASE_URL}/user/${id}`, { method: "GET" });
-                const user_ret = await response.json();
-                if(!response.ok){
+                const user_response = await fetch(`${REACT_APP_API_BASE_URL}/user/${id}`, { method: "GET" });
+                const user_ret = await user_response.json();
+                if(!user_response.ok){
                     console.error(user_ret);
                     alert("Error：" + JSON.stringify(user_ret));
                     return;
                 }
                 setUser(user_ret);
 
-                const response = await fetch(`${REACT_APP_API_BASE_URL}/sell/${id}/`, { method: "GET" });
-                const items_ret = await response.json();
-                if(!response.ok){
+                const items_response = await fetch(`${REACT_APP_API_BASE_URL}/sell/${id}/`, { method: "GET" });
+                const items_ret = await items_response.json();
+                if(!items_response.ok){
                     console.error(items_ret);
                     alert("Error：" + JSON.stringify(items_ret));
                     return;
