@@ -50,7 +50,11 @@ export default function Item(){
             <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
             <p>カテゴリ: {item.category}</p>
+            <div>{!item.buyer_id ?(
             <Link to={`/item/${id}/buy`}>購入する</Link>
+            ):(
+            <p>この商品は購入済みです</p>
+            )}</div>
         </div>
     );
 }
