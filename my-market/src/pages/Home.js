@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
 
@@ -29,6 +30,7 @@ export default function Home() {
       <p>
       <ul>{items.map((item) => (
         <li>
+          <Link to={`/item/${item.id}`}>
           <div><img src={item.image_url} alt={item.name} /></div>
           <div>{item.name}</div>
           <div>{item.price}</div>
@@ -36,6 +38,7 @@ export default function Home() {
           <div>{item.seller}</div>
           <div>{item.category}</div>
           <div>{item.posted_at}</div>
+          </Link>
         </li>
       ))}</ul>
       </p>
