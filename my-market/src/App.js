@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
 import Home from "./pages/Home";
-import MyPage from "./pages/MyPage";
 import EditProfile from "./pages/EditProfile";
 import UserPage from "./pages/UserPage";
 import Login from "./pages/Login";
@@ -30,8 +29,7 @@ function App() {
 
         <Route path="/user/:id" element={<UserPage />} />
 
-        <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
-        <Route path="/mypage/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+        <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
 
         <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
 

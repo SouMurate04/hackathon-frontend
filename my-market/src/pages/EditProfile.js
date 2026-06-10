@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { updateProfile, } from "firebase/auth";
 
-export default function MyPage() {
+export default function EditProfile() {
 
     const user = fireAuth.currentUser;
     const [name, setName] = useState(user.displayName);
@@ -50,6 +50,7 @@ export default function MyPage() {
                     email: email,
                 }),
             });
+            const user_ret = await response.json();
 
             if (!response.ok) {
                 throw new Error("バックエンドでのプロフィール更新に失敗しました");
@@ -62,7 +63,7 @@ export default function MyPage() {
 
             await updateProfile(user, newProfile);
             alert("プロフィールを変更しました");
-            navigate("/mypage");
+            navigate(`/user/${user_ret.id}`);
         } catch (err) {
             console.error(err);
             setError(err.message);

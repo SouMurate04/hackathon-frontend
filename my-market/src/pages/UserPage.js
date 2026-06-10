@@ -41,7 +41,7 @@ export default function UserPage(){
             <img src={user.image_url} alt={user.name} />
             <div>自己紹介，出品したもの(余裕あればブクマ)を追加していくぞ</div>
             <div>{fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid &&
-            <Link to="/mypage">プロフィールを編集</Link>}</div>
+            <Link to="/edit-profile">プロフィールを編集</Link>}</div>
         </div>
     );
 }

@@ -9,6 +9,8 @@ export default function Header() {
   const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
   const navigate = useNavigate();
 
+  const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(fireAuth, user => {
       setLoginUser(user);
@@ -22,6 +24,25 @@ export default function Header() {
     navigate("/");
   };
 
+  const handleMyPage = async () => {
+    const token = await fireAuth.currentUser.getIdToken();
+
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/user/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const user = await response.json();
+
+    if (!response.ok) {
+      alert("ユーザー情報の取得に失敗しました");
+      return;
+    }
+
+    navigate(`/user/${user.id}`);
+  };
+
 
   return (
     <header>
@@ -31,7 +52,7 @@ export default function Header() {
       {loginUser ? (
         <>
           {" | "}
-          <Link to="/mypage">{loginUser.displayName || "ユーザー"}さん</Link>
+          <button onClick={handleMyPage}>{loginUser.displayName || "ユーザー"}さん</button>
 
           {" | "}
           <Link to="/notifications">Notifications</Link>
