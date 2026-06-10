@@ -7,6 +7,7 @@ export default function UserPage(){
 
     const { id } = useParams();
     const [user, setUser] = useState(null);
+    const [items, setItems] = useState([]);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -21,6 +22,15 @@ export default function UserPage(){
                     return;
                 }
                 setUser(user_ret);
+
+                const response = await fetch(`${REACT_APP_API_BASE_URL}/sell/${id}/`, { method: "GET" });
+                const items_ret = await response.json();
+                if(!response.ok){
+                    console.error(items_ret);
+                    alert("Error：" + JSON.stringify(items_ret));
+                    return;
+                }
+                setItems(items_ret);
             }catch(err){
                 alert(err.message);
                 console.error(err.message);
@@ -42,6 +52,24 @@ export default function UserPage(){
             <div>自己紹介，出品したもの(余裕あればブクマ)を追加していくぞ</div>
             <div>{fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid &&
             <Link to="/edit-profile">プロフィールを編集</Link>}</div>
+
+            <h1>商品一覧</h1>
+            {items ? (
+            <ul>{items.map((item) => (
+                <li key={item.id}>
+                <Link to={`/item/${item.id}`}>
+                <div><img src={item.image_url} alt={item.name} /></div>
+                <div>{item.name}</div>
+                <div>{item.price}</div>
+                <div>{item.description}</div>
+                <div>{item.seller}</div>
+                <div>{item.category}</div>
+                <div>{item.posted_at}</div>
+                </Link>
+                </li>))}</ul>
+                ):(
+                    <p>出品した商品はありません</p>
+                )}
         </div>
     );
 }
