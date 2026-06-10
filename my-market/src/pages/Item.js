@@ -1,7 +1,5 @@
 import { useEffect , useState } from "react";
-import { useParams } from "react-router-dom";
-
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 export default function Item(){
 
@@ -14,10 +12,7 @@ export default function Item(){
     useEffect(() => {
         const load_item = async () => {
             try{
-                const response = await fetch(`${REACT_APP_API_BASE_URL}/browse/${id}`,
-                {
-                    method: "GET",
-                });
+                const response = await fetch(`${REACT_APP_API_BASE_URL}/browse/${id}`, { method: "GET" });
                 const item_ret = await response.json();
                 if (!response.ok) {
                     console.error(item_ret);

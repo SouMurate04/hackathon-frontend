@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import MyPage from "./pages/MyPage";
 import EditProfile from "./pages/EditProfile";
+import UserPage from "./pages/UserPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
@@ -26,6 +27,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/item/:id" element={<Item />} />
         <Route path="/item/:id/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
+
+        <Route path="/user/:id" element={<UserPage />} />
 
         <Route path="/mypage" element={<ProtectedRoute><MyPage /></ProtectedRoute>} />
         <Route path="/mypage/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
