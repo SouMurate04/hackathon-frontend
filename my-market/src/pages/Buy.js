@@ -47,7 +47,7 @@ export default function Buy(){
             });
 
             if (!response.ok) {
-                throw new Error("購入に失敗しました");
+                throw new Error("購入に失敗しました\n購入済みである，または出品が取り下げられた場合などが考えられます");
             }    
             
             alert("購入に成功しました");
