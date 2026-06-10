@@ -1,14 +1,14 @@
 import { useEffect , useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { fireAuth } from "../firebase";
-
 
 export default function Buy(){
 
     const { id } = useParams();
     const [item, setItem] = useState(null);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -78,7 +78,7 @@ export default function Buy(){
             <p>{item.price}円</p>
             <p>出品者: {item.seller}</p>
             <form onSubmit={handleBuy}>
-                <input type="submit">購入を確定</input>
+                <input type="submit" value="購入確定" />
             </form>
         </div>
     );
