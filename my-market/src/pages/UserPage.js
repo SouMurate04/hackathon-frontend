@@ -23,7 +23,7 @@ export default function UserPage(){
                 }
                 setUser(user_ret);
 
-                const items_response = await fetch(`${REACT_APP_API_BASE_URL}/sell/${id}/`, { method: "GET" });
+                const items_response = await fetch(`${REACT_APP_API_BASE_URL}/sell/${id}`, { method: "GET" });
                 const items_ret = await items_response.json();
                 if(!items_response.ok){
                     console.error(items_ret);
