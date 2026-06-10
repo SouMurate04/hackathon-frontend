@@ -7,7 +7,6 @@ export default function Buy(){
 
     const { id } = useParams();
     const [item, setItem] = useState(null);
-    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -27,8 +26,8 @@ export default function Buy(){
                 }
                 setItem(item_ret);
             }catch(err){
-                setError(err.message);
                 console.error(err.message);
+                alert(err.message);
             }
         };
         load_item();
@@ -37,7 +36,6 @@ export default function Buy(){
 
     const handleBuy = async (e) => {
         e.preventDefault();
-        setError("");
         
         try{
             const token = await fireAuth.currentUser.getIdToken();
@@ -55,15 +53,10 @@ export default function Buy(){
             alert("購入に成功しました");
             navigate("/");
         }catch(err){
-            setError(err.message);
             console.error(err.message);
+            alert(err.message);
+            navigate(`/item/${id}`);
         }
-    }
-
-        
-
-    if (error) {
-        return <p>{error}</p>;
     }
 
     if (!item) {
