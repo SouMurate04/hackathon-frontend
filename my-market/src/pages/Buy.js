@@ -1,9 +1,10 @@
 import { useEffect , useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Link } from "react-router-dom";
+import { fireAuth } from "../firebase";
 
-export default function Item(){
+
+export default function Buy(){
 
     const { id } = useParams();
     const [item, setItem] = useState(null);
@@ -34,6 +35,33 @@ export default function Item(){
     
     }, [REACT_APP_API_BASE_URL, id]);
 
+    const handleBuy = async (e) => {
+        e.preventDefault();
+        setError("");
+        
+        try{
+            const token = await fireAuth.currentUser.getIdToken();
+            const response = await fetch(`${REACT_APP_API_BASE_URL}/buy/${id}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("購入に失敗しました");
+            }    
+            
+            alert("購入に成功しました");
+            navigate("/");
+        }catch(err){
+            setError(err.message);
+            console.error(err.message);
+        }
+    }
+
+        
+
     if (error) {
         return <p>{error}</p>;
     }
@@ -44,13 +72,14 @@ export default function Item(){
 
     return(
         <div>
+            <h1>Buy</h1>
             <h1>{item.name}</h1>
             <img src={item.image_url} alt={item.name} />
             <p>{item.price}円</p>
-            <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
-            <p>カテゴリ: {item.category}</p>
-            <Link to={`/item/${id}/buy`}>購入する</Link>
+            <form onSubmit={handleBuy}>
+                <input type="submit">購入を確定</input>
+            </form>
         </div>
     );
 }
