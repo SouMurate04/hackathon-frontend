@@ -24,13 +24,21 @@ export default function Item(){
                 }
                 setItem(item_ret);
             }catch(err){
-                setError(err);
+                setError(err.message);
                 console.error(err.message);
             }
         };
         load_item();
     
     }, [REACT_APP_API_BASE_URL, id]);
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
+    if (!item) {
+        return <p>読み込み中...</p>;
+    }
 
     return(
         <div>

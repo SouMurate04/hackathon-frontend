@@ -29,7 +29,7 @@ export default function Home() {
       <h1>商品一覧</h1>
       <p>
       <ul>{items.map((item) => (
-        <li>
+        <li key={item.id}>
           <Link to={`/item/${item.id}`}>
           <div><img src={item.image_url} alt={item.name} /></div>
           <div>{item.name}</div>
