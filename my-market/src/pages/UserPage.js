@@ -14,7 +14,7 @@ export default function UserPage(){
         const load_user = async () =>{
             try{
                 const response = await fetch(`${REACT_APP_API_BASE_URL}/user/${id}`, { method: "GET" });
-                const user_ret = response.json();
+                const user_ret = await response.json();
                 if(!response.ok){
                     console.error(user_ret);
                     alert("Error：" + JSON.stringify(user_ret));
@@ -40,8 +40,8 @@ export default function UserPage(){
             <h1>{user.name}</h1>
             <img src={user.image_url} alt={user.name} />
             <div>自己紹介，出品したもの(余裕あればブクマ)を追加していくぞ</div>
-            <div>{user.firebase_uid === fireAuth.currentUser.uid
-            && <Link to="/mypage">プロフィールを編集</Link>}</div>
+            <div>{fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid &&
+            <Link to="/mypage">プロフィールを編集</Link>}</div>
         </div>
     );
 }
