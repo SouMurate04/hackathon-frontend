@@ -70,12 +70,12 @@ export default function Buy(){
             <img src={item.image_url} alt={item.name} />
             <p>{item.price}円</p>
             <p>出品者: {item.seller}</p>
-            {!item.buyer_id ?
+            <div>{!item.buyer_id ?
             <form onSubmit={handleBuy}>
                 <input type="submit" value="購入確定" />
             :
             <p>この商品は購入済みです</p>
-            }
+            }</div>
             </form>
         </div>
     );
