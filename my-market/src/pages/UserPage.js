@@ -20,6 +20,7 @@ export default function UserPage(){
                     alert("Error：" + JSON.stringify(user_ret));
                     return;
                 }
+                setUser(user_ret);
             }catch(err){
                 alert(err.message);
                 console.error(err.message);
