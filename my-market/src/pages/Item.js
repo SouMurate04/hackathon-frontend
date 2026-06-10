@@ -37,7 +37,7 @@ export default function Item(){
     }
 
     if (!item) {
-        return <p>読み込み中...</p>;
+        return <p>Loading...</p>;
     }
 
     return(
