@@ -13,7 +13,7 @@ export default function UserPage(){
     useEffect(() => {
         const load_user = async () =>{
             try{
-                const response = await fetch(`${REACT_APP_API_BASE_URL}/user/${id}`, { method: GET });
+                const response = await fetch(`${REACT_APP_API_BASE_URL}/user/${id}`, { method: "GET" });
                 const user_ret = response.json();
                 if(!response.ok){
                     console.error(user_ret);
