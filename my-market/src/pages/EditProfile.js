@@ -10,7 +10,10 @@ export default function EditProfile() {
     const DEFAULT_ICON_URL = process.env.REACT_APP_DEFAULT_ICON_URL;
 
     const user = fireAuth.currentUser;
-    const [icon, setIcon] = useState(DEFAULT_ICON_URL);
+    
+    const [iconUrl, setIconUrl] = useState(DEFAULT_ICON_URL);
+    const [icon, setIcon] = useState(null);
+
     const [name, setName] = useState(user.displayName);
     const [email, setEmail] = useState(user.email);
     const [bio, setBio] = useState("");
@@ -44,7 +47,7 @@ export default function EditProfile() {
               }
 
               setBio(user_ret.bio);
-              setIcon(user_ret.icon_url);
+              setIconUrl(user_ret.icon_url);
             }catch(err){
                 alert(err.message);
                 console.error(err.message);
@@ -110,7 +113,8 @@ export default function EditProfile() {
     };
 
     const deleteIcon = () => {
-        setIcon(DEFAULT_ICON_URL);
+        setIcon(null);
+        setIconUrl(DEFAULT_ICON_URL);
     }
 
   return (
@@ -118,10 +122,13 @@ export default function EditProfile() {
       <div>
         <h1>Edit Profile</h1>
         <form onSubmit={handleEditProfile}>
-            <img src={URL.createObjectURL(icon)} alt={name} />
+            <img src={iconUrl} alt={name} />
             <button type="button" onClick={deleteIcon}>アイコンを削除</button>
             <input type="file" accept="image/*"
-            onChange={(e) => setIcon(e.target.files[0])} 
+            onChange={(e) => {
+              setIcon(e.target.files[0])
+              setIconUrl(URL.createObjectURL(e.target.files[0]));
+            }} 
             />
 
             <input type="text" placeholder="ニックネーム" value={name}
