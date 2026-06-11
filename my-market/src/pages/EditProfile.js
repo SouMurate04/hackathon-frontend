@@ -55,7 +55,7 @@ export default function EditProfile() {
         };
         load_user();
 
-    }, [API_BASE_URL]);
+    }, [API_BASE_URL, DEFAULT_ICON_URL]);
 
 
     const handleEditProfile = async (e) => {
