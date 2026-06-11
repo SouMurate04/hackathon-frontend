@@ -1,14 +1,19 @@
 import { fireAuth } from "../firebase";
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
 import { updateProfile, } from "firebase/auth";
 
 export default function EditProfile() {
 
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+    const DEFAULT_ICON_URL = process.env.REACT_APP_DEFAULT_ICON_URL;
+
     const user = fireAuth.currentUser;
+    const [icon, setIcon] = useState(DEFAULT_ICON_URL);
     const [name, setName] = useState(user.displayName);
     const [email, setEmail] = useState(user.email);
+    const [bio, setBio] = useState("");
 
     const [wantSetPassword, setWantSetPassword] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
@@ -17,9 +22,30 @@ export default function EditProfile() {
 
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
     
+    useEffect(() => {
+        const load_user = async () =>{
+            try{
+              const user_response = await fetch(`${API_BASE_URL}/user/me`, { method: "GET" });
+              const user_ret = await user_response.json();
+              if(!user_response.ok){
+                console.error(user_ret);
+                alert("Error：" + JSON.stringify(user_ret));
+                return;
+              }
+
+              setBio(user_ret.bio);
+              setIcon(user_ret.icon_url);
+            }catch(err){
+                alert(err.message);
+                console.error(err.message);
+            }
+        };
+        load_user();
+
+    }, [API_BASE_URL]);
+
+
     const handleEditProfile = async (e) => {
         e.preventDefault();
         setError("");
@@ -34,6 +60,8 @@ export default function EditProfile() {
                     throw new Error("変更前のパスワードが間違っています");
                 }else if(password !== password2){
                     throw new Error("新しいパスワードが一致しません");
+                }else if(!password){
+                    throw new Error("新しいパスワードが空です");
                 }
             }
 
@@ -48,6 +76,8 @@ export default function EditProfile() {
                 body: JSON.stringify({
                     name: name,
                     email: email,
+                    bio: bio,
+                    icon: icon,
                 }),
             });
             const user_ret = await response.json();
@@ -70,13 +100,27 @@ export default function EditProfile() {
         }
     };
 
+    const deleteIcon = () => {
+        setIcon(DEFAULT_ICON_URL);
+    }
+
   return (
     <div>
       <div>
         <h1>Edit Profile</h1>
         <form onSubmit={handleEditProfile}>
+            <img src={icon} alt={name} />
+            <button onClick={deleteIcon}>アイコンを削除</button>
+            <input type="file" accept="image/*"
+            onChange={(e) => setIcon(e.target.files[0])} 
+            />
+
             <input type="text" placeholder="ニックネーム" value={name}
               onChange={(e) => setName(e.target.value)}
+            />
+
+            <input type="text" placeholder="プロフィール" value={bio}
+              onChange={(e) => setBio(e.target.value)}
             />
 
             <input type="email" placeholder="メールアドレス" value={email}

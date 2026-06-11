@@ -4,7 +4,6 @@ import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, }
 import { fireAuth } from "../firebase";
 
 export default function Signup() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,12 +17,12 @@ export default function Signup() {
 
     try {
 
-      if(name == null || email == null || password == null){
+      if(email == null || password == null){
         throw new Error("値の入力が不十分です");
       }
 
       const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);     
-      await updateProfile(userCredential.user, { displayName: name, });
+      await updateProfile(userCredential.user, { displayName: "ユーザー", });
 
       const token = await userCredential.user.getIdToken();
       const response = await fetch(`${API_BASE_URL}/user`, {
@@ -33,7 +32,6 @@ export default function Signup() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: userCredential.user.displayName,
           email: userCredential.user.email,
         }),
       });
@@ -56,10 +54,6 @@ export default function Signup() {
       <h1>新規作成</h1>
 
       <form onSubmit={handleSignup}>
-        <input type="text" placeholder="ニックネーム" value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
         <input type="email" placeholder="メールアドレス" value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
