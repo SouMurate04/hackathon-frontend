@@ -26,7 +26,16 @@ export default function EditProfile() {
     useEffect(() => {
         const load_user = async () =>{
             try{
-              const user_response = await fetch(`${API_BASE_URL}/user/me`, { method: "GET" });
+
+              const token = await fireAuth.currentUser.getIdToken();
+
+              const user_response = await fetch(`${API_BASE_URL}/user/me`, 
+                { 
+                  method: "GET" ,
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
               const user_ret = await user_response.json();
               if(!user_response.ok){
                 console.error(user_ret);
@@ -67,18 +76,18 @@ export default function EditProfile() {
 
             const token = await fireAuth.currentUser.getIdToken();
 
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("email", email);
+            formData.append("bio", bio);
+            formData.append("icon", icon);
+
             const response = await fetch(`${API_BASE_URL}/user`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    bio: bio,
-                    icon: icon,
-                }),
+                body: formData,
             });
             const user_ret = await response.json();
 
@@ -109,8 +118,8 @@ export default function EditProfile() {
       <div>
         <h1>Edit Profile</h1>
         <form onSubmit={handleEditProfile}>
-            <img src={icon} alt={name} />
-            <button onClick={deleteIcon}>アイコンを削除</button>
+            <img src={URL.createObjectURL(icon)} alt={name} />
+            <button type="button" onClick={deleteIcon}>アイコンを削除</button>
             <input type="file" accept="image/*"
             onChange={(e) => setIcon(e.target.files[0])} 
             />
