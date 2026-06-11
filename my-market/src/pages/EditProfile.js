@@ -82,8 +82,12 @@ export default function EditProfile() {
             const formData = new FormData();
             formData.append("name", name);
             formData.append("email", email);
-            formData.append("bio", bio);
-            formData.append("icon", icon);
+            formData.append("bio", bio || "");
+            formData.append("icon_url", iconUrl || DEFAULT_ICON_URL);
+
+            if(icon){
+              formData.append("icon", icon);
+            }
 
             const response = await fetch(`${API_BASE_URL}/user`, {
                 method: "PUT",
