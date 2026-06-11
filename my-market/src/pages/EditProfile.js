@@ -47,7 +47,7 @@ export default function EditProfile() {
               }
 
               setBio(user_ret.bio);
-              setIconUrl(user_ret.icon_url);
+              setIconUrl(user_ret.icon_url || DEFAULT_ICON_URL);
             }catch(err){
                 alert(err.message);
                 console.error(err.message);
