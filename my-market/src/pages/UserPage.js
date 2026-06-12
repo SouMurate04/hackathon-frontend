@@ -48,7 +48,7 @@ export default function UserPage(){
     return(
         <div>
             <h1>{user.name}</h1>
-            <img src={user.image_url} alt={user.name} />
+            <img src={user.icon_url} alt={user.name} />
             <div>{user.bio}</div>
             <div>{fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid &&
             <Link to="/edit-profile">プロフィールを編集</Link>}</div>
