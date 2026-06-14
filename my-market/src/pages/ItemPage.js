@@ -1,11 +1,12 @@
 import { useEffect , useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { fireAuth } from "../firebase";
 
 export default function ItemPage(){
 
     const { id } = useParams();
     const [item, setItem] = useState(null);
-    const [error, setError] = useState(null);
+    const [liked, setLiked] = useState(false);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -20,8 +21,23 @@ export default function ItemPage(){
                     return;
                 }
                 setItem(item_ret);
+
+                if (fireAuth.currentUser) {
+                    const token = await fireAuth.currentUser.getIdToken();
+                    const likeResponse = await fetch(`${REACT_APP_API_BASE_URL}/like/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const likeRet = await likeResponse.json();
+
+                if (likeResponse.ok) {
+                    setLiked(likeRet.liked);
+                }
+            }
             }catch(err){
-                setError(err.message);
+                alert(err.message);
                 console.error(err.message);
             }
         };
@@ -29,9 +45,31 @@ export default function ItemPage(){
     
     }, [REACT_APP_API_BASE_URL, id]);
 
-    if (error) {
-        return <p>{error}</p>;
-    }
+    const handleLike = async () => {
+        if (!fireAuth.currentUser) {
+            alert("いいねするにはログインしてください");
+            return;
+        }
+
+        const token = await fireAuth.currentUser.getIdToken();
+
+        const response = await fetch(`${REACT_APP_API_BASE_URL}/like/${id}`, {
+            method: liked ? "DELETE" : "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert("いいねの更新に失敗しました");
+            console.error(data);
+            return;
+        }
+
+        setLiked(data.liked);
+    };
 
     if (!item) {
         return <p>Loading...</p>;
@@ -45,6 +83,9 @@ export default function ItemPage(){
             <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
             <p>カテゴリ: {item.c0_name} / {item.c1_name}</p>
+            <button type="button" onClick={handleLike}>
+                {liked ? "いいね済み" : "いいね"}
+            </button>
             <div>{!item.buyer_id ?(
             <Link to={`/item/${id}/buy`}>購入する</Link>
             ):(
