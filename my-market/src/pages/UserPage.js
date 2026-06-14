@@ -43,9 +43,11 @@ export default function UserPage(){
 
     useEffect(() => {
         const loadLikedItems = async () => {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/likes/${id}`);
+            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/likes/${id}`);
 
             if (!res.ok) {
+                const errorText = await res.text();
+                console.error(errorText);
                 throw new Error("いいねした商品一覧の取得に失敗しました");
             }
 
