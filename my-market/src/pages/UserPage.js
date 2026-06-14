@@ -60,7 +60,7 @@ export default function UserPage(){
         if (id) {
             loadLikedItems();
         }
-    }, [id]);
+    }, [REACT_APP_API_BASE_URL, id]);
 
     useEffect(() => {
         const loadBoughtItems = async () => {
