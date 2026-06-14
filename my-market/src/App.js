@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import Sell from "./pages/Sell";
-import Item from "./pages/Item";
+import ItemPage from "./pages/ItemPage";
 import Buy from "./pages/Buy";
 
 import Loader from "./components/Loader";
@@ -24,7 +24,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/item/:id" element={<Item />} />
+        <Route path="/item/:id" element={<ItemPage />} />
         <Route path="/item/:id/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
 
         <Route path="/user/:id" element={<UserPage />} />

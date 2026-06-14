@@ -1,7 +1,7 @@
 import { useEffect , useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-export default function Item(){
+export default function ItemPage(){
 
     const { id } = useParams();
     const [item, setItem] = useState(null);
@@ -44,7 +44,7 @@ export default function Item(){
             <p>{item.price}円</p>
             <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
-            <p>カテゴリ: {item.category}</p>
+            <p>カテゴリ: {item.c0_name} / {item.c1_name}</p>
             <div>{!item.buyer_id ?(
             <Link to={`/item/${id}/buy`}>購入する</Link>
             ):(
