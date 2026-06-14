@@ -8,6 +8,12 @@ export default function ItemPage(){
     const [item, setItem] = useState(null);
     const [liked, setLiked] = useState(false);
     const [recommendedItems, setRecommendedItems] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const isSeller =
+        fireAuth.currentUser &&
+        item.seller_id &&
+        item.buyer_id === null &&
+        item.firebase_uid !== undefined;
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -69,6 +75,27 @@ export default function ItemPage(){
         }
     }, [REACT_APP_API_BASE_URL, id]);
 
+    useEffect(() => {
+        const loadCurrentUser = async () => {
+            if (!fireAuth.currentUser) return;
+
+            const token = await fireAuth.currentUser.getIdToken();
+
+            const res = await fetch(`${REACT_APP_API_BASE_URL}/user/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setCurrentUser(data);
+            }
+        };
+
+        loadCurrentUser();
+    }, [REACT_APP_API_BASE_URL]);
+
     const handleLike = async () => {
         if (!fireAuth.currentUser) {
             alert("いいねするにはログインしてください");
@@ -115,6 +142,11 @@ export default function ItemPage(){
             ):(
             <p>この商品は購入済みです</p>
             )}</div>
+            <>
+            {currentUser && item.seller_id === currentUser.id && !item.buyer_id && (
+                <Link to={`/item/${id}/edit`}>商品情報を編集</Link>
+            )}
+            </>
 
             <h2>関連商品</h2>
 
