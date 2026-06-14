@@ -8,6 +8,7 @@ export default function UserPage(){
     const { id } = useParams();
     const [user, setUser] = useState(null);
     const [items, setItems] = useState([]);
+    const [likedItems, setLikedItems] = useState([]);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -40,6 +41,23 @@ export default function UserPage(){
 
     }, [REACT_APP_API_BASE_URL, id]);
 
+    useEffect(() => {
+        const loadLikedItems = async () => {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/likes/${id}`);
+
+            if (!res.ok) {
+                throw new Error("いいねした商品一覧の取得に失敗しました");
+            }
+
+            const data = await res.json();
+            setLikedItems(data);
+        };
+
+        if (id) {
+            loadLikedItems();
+        }
+    }, [id]);
+
     if(!user){
         return <p>Loading...</p>;
     }
@@ -69,7 +87,27 @@ export default function UserPage(){
                 </li>))}</ul>
                 ):(
                     <p>出品した商品はありません</p>
-                )}
+                )
+            }
+
+            <h1>いいねした商品</h1>
+            {likedItems ? (
+            <ul>{likedItems.map((item) => (
+                <li key={item.id}>
+                <Link to={`/item/${item.id}`}>
+                <div><img src={item.image_url} alt={item.name} /></div>
+                <div>{item.name}</div>
+                <div>{item.price}</div>
+                <div>{item.description}</div>
+                <div>{item.seller}</div>
+                <div>{item.category}</div>
+                <div>{item.posted_at}</div>
+                </Link>
+                </li>))}</ul>
+                ):(
+                    <p>いいねした商品はありません</p>
+                )
+            }
         </div>
     );
 }
