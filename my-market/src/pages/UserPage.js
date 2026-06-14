@@ -9,8 +9,10 @@ export default function UserPage(){
     const [user, setUser] = useState(null);
     const [items, setItems] = useState([]);
     const [likedItems, setLikedItems] = useState([]);
+    const [boughtItems, setBoughtItems] = useState([]);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+    const isMyPage = fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid;
 
     useEffect(() => {
         const load_user = async () =>{
@@ -60,6 +62,35 @@ export default function UserPage(){
         }
     }, [id]);
 
+    useEffect(() => {
+    const loadBoughtItems = async () => {
+        if (!user || !fireAuth.currentUser) return;
+        if (user.firebase_uid !== fireAuth.currentUser.uid) return;
+
+        const token = await fireAuth.currentUser.getIdToken();
+
+        const res = await fetch(`${REACT_APP_API_BASE_URL}/buy/me`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error(errorText);
+            throw new Error("購入商品一覧の取得に失敗しました");
+        }
+
+        const data = await res.json();
+        setBoughtItems(data);
+    };
+
+    loadBoughtItems().catch((err) => {
+        console.error(err);
+    });
+}, [REACT_APP_API_BASE_URL, user]);
+
     if(!user){
         return <p>Loading...</p>;
     }
@@ -70,8 +101,7 @@ export default function UserPage(){
             <h1>{user.name}</h1>
             <img src={user.icon_url} alt={user.name} />
             <div>{user.bio}</div>
-            <div>{fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid &&
-            <Link to="/edit-profile">プロフィールを編集</Link>}</div>
+            <div>{isMyPage && <Link to="/edit-profile">プロフィールを編集</Link>}</div>
 
             <h1>商品一覧</h1>
             {items ? (
@@ -91,6 +121,32 @@ export default function UserPage(){
                     <p>出品した商品はありません</p>
                 )
             }
+
+            {isMyPage && (
+            <>
+            <h1>購入した商品</h1>
+
+            {boughtItems.length > 0 ? (
+                <ul>
+                    {boughtItems.map((item) => (
+                        <li key={item.id}>
+                        <Link to={`/item/${item.id}`}>
+                        <div><img src={item.image_url} alt={item.name} /></div>
+                        <div>{item.name}</div>
+                        <div>{item.price}</div>
+                        <div>{item.description}</div>
+                        <div>{item.seller}</div>
+                        <div>{item.c0_name} / {item.c1_name}</div>
+                        <div>{item.posted_at}</div>
+                        </Link>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>購入した商品はありません</p>
+            )}
+            </>
+            )}
 
             <h1>いいねした商品</h1>
             {likedItems ? (
