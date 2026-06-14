@@ -9,11 +9,6 @@ export default function ItemPage(){
     const [liked, setLiked] = useState(false);
     const [recommendedItems, setRecommendedItems] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
-    const isSeller =
-        fireAuth.currentUser &&
-        item.seller_id &&
-        item.buyer_id === null &&
-        item.firebase_uid !== undefined;
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
