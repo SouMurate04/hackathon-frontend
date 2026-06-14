@@ -7,6 +7,7 @@ export default function ItemPage(){
     const { id } = useParams();
     const [item, setItem] = useState(null);
     const [liked, setLiked] = useState(false);
+    const [recommendedItems, setRecommendedItems] = useState([]);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -43,6 +44,29 @@ export default function ItemPage(){
         };
         load_item();
     
+    }, [REACT_APP_API_BASE_URL, id]);
+
+    useEffect(() => {
+        const loadRecommendedItems = async () => {
+            try {
+                const res = await fetch(
+                    `${REACT_APP_API_BASE_URL}/browse/${id}/recommendations?limit=4`
+                );
+
+            if (!res.ok) {
+                throw new Error("おすすめ商品の取得に失敗しました");
+            }
+
+            const data = await res.json();
+            setRecommendedItems(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        if (id) {
+            loadRecommendedItems();
+        }
     }, [REACT_APP_API_BASE_URL, id]);
 
     const handleLike = async () => {
@@ -91,6 +115,25 @@ export default function ItemPage(){
             ):(
             <p>この商品は購入済みです</p>
             )}</div>
+
+            <h2>関連商品</h2>
+
+            {recommendedItems.length > 0 ? (
+                <ul>
+                    {recommendedItems.map((item) => (
+                    <li key={item.id}>
+                        <Link to={`/item/${item.id}`}>
+                        <img src={item.image_url} alt={item.name} />
+                        <div>{item.name}</div>
+                        <div>{item.price}円</div>
+                        <div>{item.c0_name} / {item.c1_name}</div>
+                        </Link>
+                    </li>
+                    ))}
+                </ul>
+                ) : (
+                <p>関連商品はまだありません</p>
+            )}
         </div>
     );
 }
