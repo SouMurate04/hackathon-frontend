@@ -12,7 +12,7 @@ export default function UserPage(){
     const [boughtItems, setBoughtItems] = useState([]);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
-    const isMyPage = fireAuth.currentUser && user.firebase_uid === fireAuth.currentUser.uid;
+    const isMyPage = fireAuth.currentUser && user?.firebase_uid === fireAuth.currentUser.uid;
 
     useEffect(() => {
         const load_user = async () =>{
@@ -45,7 +45,7 @@ export default function UserPage(){
 
     useEffect(() => {
         const loadLikedItems = async () => {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/likes/${id}`);
+            const res = await fetch(`${REACT_APP_API_BASE_URL}/likes/${id}`);
 
             if (!res.ok) {
                 const errorText = await res.text();
@@ -63,33 +63,33 @@ export default function UserPage(){
     }, [id]);
 
     useEffect(() => {
-    const loadBoughtItems = async () => {
-        if (!user || !fireAuth.currentUser) return;
-        if (user.firebase_uid !== fireAuth.currentUser.uid) return;
+        const loadBoughtItems = async () => {
+            if (!user || !fireAuth.currentUser) return;
+            if (user.firebase_uid !== fireAuth.currentUser.uid) return;
 
-        const token = await fireAuth.currentUser.getIdToken();
+            const token = await fireAuth.currentUser.getIdToken();
 
-        const res = await fetch(`${REACT_APP_API_BASE_URL}/buy/me`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            const res = await fetch(`${REACT_APP_API_BASE_URL}/buy/me`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error(errorText);
+                throw new Error("購入商品一覧の取得に失敗しました");
+            }
+
+            const data = await res.json();
+            setBoughtItems(data);
+        };
+
+        loadBoughtItems().catch((err) => {
+            console.error(err);
         });
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error(errorText);
-            throw new Error("購入商品一覧の取得に失敗しました");
-        }
-
-        const data = await res.json();
-        setBoughtItems(data);
-    };
-
-    loadBoughtItems().catch((err) => {
-        console.error(err);
-    });
-}, [REACT_APP_API_BASE_URL, user]);
+    }, [REACT_APP_API_BASE_URL, user]);
 
     if(!user){
         return <p>Loading...</p>;
