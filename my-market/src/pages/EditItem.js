@@ -121,6 +121,38 @@ export default function EditItem() {
         }
     };
 
+    const handleGenerateIntroduction = async () => {
+        setError("");
+
+        try {
+            if (!image) {
+                throw new Error("紹介文を生成するには新しい画像を選択してください");
+            }
+
+            const formData = new FormData();
+            formData.append("image", image);
+
+            const response = await fetch(`${API_BASE_URL}/sell/recommend`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error(text);
+                throw new Error("紹介文の生成に失敗しました");
+            }
+
+            const data = await response.json();
+
+            setName(data.name);
+            setDescription(data.description);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        }
+    };
+
     if (error) return <p>{error}</p>;
     if (!item) return <p>Loading...</p>;
 
@@ -136,6 +168,10 @@ export default function EditItem() {
                     accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
                 />
+
+                <button type="button" onClick={handleGenerateIntroduction}>
+                    紹介文を生成
+                </button>
 
                 <input
                     type="text"
