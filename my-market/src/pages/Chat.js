@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fireAuth } from "../firebase";
 
@@ -10,24 +10,26 @@ export default function Chat() {
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-    const loadMessages = async () => {
-        const res = await fetch(`${API_BASE_URL}/chat/${id}`);
-
-        if (!res.ok) {
-            const text = await res.text();
-            console.error(text);
-            throw new Error("チャットの取得に失敗しました");
-        }
-
-        const data = await res.json();
-        setMessages(data);
-    };
-
     useEffect(() => {
-        loadMessages().catch((err) => {
-            console.error(err);
-            setError(err.message);
-        });
+        const loadMessages = async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/chat/${id}`);
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    console.error(text);
+                    throw new Error("チャットの取得に失敗しました");
+                }
+
+                const data = await res.json();
+                setMessages(data);
+            } catch (err) {
+                console.error(err);
+                setError(err.message);
+            }
+        };
+
+        loadMessages();
     }, [API_BASE_URL, id]);
 
     const handleSubmit = async (e) => {
@@ -79,7 +81,7 @@ export default function Chat() {
 
             <div>
                 {messages.map((chat) => {
-                    const isMine = fireAuth.currentUser && chat.user_id;
+                    //const isMine = fireAuth.currentUser && chat.user_id;
 
                     return (
                         <div key={chat.id}>

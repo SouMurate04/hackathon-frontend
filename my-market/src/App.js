@@ -29,7 +29,7 @@ function App() {
         <Route path="/item/:id" element={<ItemPage />} />
         <Route path="/item/:id/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
         <Route path="/item/:id/edit" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
-        <Route path="/item/:id/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+        <Route path="/item/:id/chat" element={<Chat />} />
 
 
         <Route path="/user/:id" element={<UserPage />} />
