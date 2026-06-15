@@ -26,7 +26,7 @@ export default function Header() {
 
           const token = await fireAuth.currentUser.getIdToken();
 
-          const res = await fetch(`${API_BASE_URL}/notification/unread-count`, {
+          const res = await fetch(`${REACT_APP_API_BASE_URL}/notification/unread-count`, {
               headers: {
                   Authorization: `Bearer ${token}`,
               },
