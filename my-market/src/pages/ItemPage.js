@@ -129,6 +129,7 @@ export default function ItemPage(){
             <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
             <p>カテゴリ: {item.c0_name} / {item.c1_name}</p>
+            <Link to={`/item/${id}/chat`}>チャットを見る</Link>
             <button type="button" onClick={handleLike}>
                 {liked ? "いいね済み" : "いいね"}
             </button>
