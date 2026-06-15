@@ -14,6 +14,47 @@ export default function UserPage(){
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
     const isMyPage = fireAuth.currentUser && user?.firebase_uid === fireAuth.currentUser.uid;
 
+    const renderItem = (item) => {
+        const isSold = item.buyer_id !== null;
+
+        return (
+            <li key={item.id}>
+                <Link to={`/item/${item.id}`}>
+                    <div style={{ position: "relative", display: "inline-block" }}>
+                        <img
+                            src={item.image_url}
+                            alt={item.name}
+                            style={{ opacity: isSold ? 0.5 : 1 }}
+                        />
+
+                        {isSold && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: "8px",
+                                    left: "8px",
+                                    backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                    color: "white",
+                                    padding: "4px 8px",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                SOLD OUT
+                            </div>
+                        )}
+                    </div>
+
+                    <div>{item.name}</div>
+                    <div>{item.price}円</div>
+                    <div>{item.description}</div>
+                    <div>{item.seller}</div>
+                    <div>{item.c0_name} / {item.c1_name}</div>
+                    <div>{item.posted_at}</div>
+                </Link>
+            </li>
+        );
+    };
+
     useEffect(() => {
         const load_user = async () =>{
             try{
@@ -105,18 +146,7 @@ export default function UserPage(){
 
             <h1>商品一覧</h1>
             {items ? (
-            <ul>{items.map((item) => (
-                <li key={item.id}>
-                <Link to={`/item/${item.id}`}>
-                <div><img src={item.image_url} alt={item.name} /></div>
-                <div>{item.name}</div>
-                <div>{item.price}</div>
-                <div>{item.description}</div>
-                <div>{item.seller}</div>
-                <div>{item.category}</div>
-                <div>{item.posted_at}</div>
-                </Link>
-                </li>))}</ul>
+            <ul>{items.map(renderItem)}</ul>
                 ):(
                     <p>出品した商品はありません</p>
                 )
@@ -127,21 +157,7 @@ export default function UserPage(){
             <h1>購入した商品</h1>
 
             {boughtItems.length > 0 ? (
-                <ul>
-                    {boughtItems.map((item) => (
-                        <li key={item.id}>
-                        <Link to={`/item/${item.id}`}>
-                        <div><img src={item.image_url} alt={item.name} /></div>
-                        <div>{item.name}</div>
-                        <div>{item.price}</div>
-                        <div>{item.description}</div>
-                        <div>{item.seller}</div>
-                        <div>{item.c0_name} / {item.c1_name}</div>
-                        <div>{item.posted_at}</div>
-                        </Link>
-                        </li>
-                    ))}
-                </ul>
+                <ul>{boughtItems.map(renderItem)}</ul>
             ) : (
                 <p>購入した商品はありません</p>
             )}
@@ -150,18 +166,7 @@ export default function UserPage(){
 
             <h1>いいねした商品</h1>
             {likedItems ? (
-            <ul>{likedItems.map((item) => (
-                <li key={item.id}>
-                <Link to={`/item/${item.id}`}>
-                <div><img src={item.image_url} alt={item.name} /></div>
-                <div>{item.name}</div>
-                <div>{item.price}</div>
-                <div>{item.description}</div>
-                <div>{item.seller}</div>
-                <div>{item.category}</div>
-                <div>{item.posted_at}</div>
-                </Link>
-                </li>))}</ul>
+            <ul>{likedItems.map(renderItem)}</ul>
                 ):(
                     <p>いいねした商品はありません</p>
                 )
