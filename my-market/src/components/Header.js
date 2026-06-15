@@ -7,6 +7,7 @@ import { fireAuth } from "../firebase";
 export default function Header() {
 
   const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -18,6 +19,27 @@ export default function Header() {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+      const loadUnreadCount = async () => {
+          if (!fireAuth.currentUser) return;
+
+          const token = await fireAuth.currentUser.getIdToken();
+
+          const res = await fetch(`${API_BASE_URL}/notification/unread-count`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
+
+          if (!res.ok) return;
+
+          const data = await res.json();
+          setUnreadCount(data.unread_count);
+      };
+
+      loadUnreadCount();
+  }, [REACT_APP_API_BASE_URL]);
 
   const handleLogout = async () => {
     await signOut(fireAuth);
@@ -55,7 +77,10 @@ export default function Header() {
           <button onClick={handleMyPage}>{loginUser.displayName || "ユーザー"}さん</button>
 
           {" | "}
-          <Link to="/notifications">Notifications</Link>
+          <Link to="/notification">
+              通知
+              {unreadCount > 0 && <span>{unreadCount}</span>}
+          </Link>          
 
           {" | "}
           <Link to="/sell">出品</Link>

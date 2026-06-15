@@ -13,6 +13,8 @@ import ItemPage from "./pages/ItemPage";
 import EditItem from "./pages/EditItem";
 import Chat from "./pages/Chat";
 import Buy from "./pages/Buy";
+import NotificationAll from "./pages/NotificationAll";
+import Notification from "./pages/Notification";
 
 import Loader from "./components/Loader";
 import Header from "./components/Header";
@@ -41,6 +43,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route path="/notification" element={<ProtectedRoute><NotificationAll /></ProtectedRoute>} />
+        <Route path="/notification/:notification_id" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
       </Routes>
     </Loader>
     </BrowserRouter>
