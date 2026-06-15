@@ -107,6 +107,8 @@ export default function Sell(){
 
             setName(data.name);
             setDescription(data.description);
+            setC0Id(String(data.c0_id));
+            setC1Id(String(data.c1_id));
         } catch (err) {
             console.error(err);
             setError(err.message);
