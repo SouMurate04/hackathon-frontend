@@ -132,7 +132,12 @@ export default function ItemPage(){
             {item.tags && item.tags.length > 0 && (
                 <div>
                     {item.tags.map((tag, index) => (
-                        <span key={`${tag}-${index}`}>#{tag} </span>
+                        <Link
+                            key={`${tag}-${index}`}
+                            to={`/browse?keyword=${encodeURIComponent(`#${tag}`)}`}
+                        >
+                            #{tag}{" "}
+                        </Link>
                     ))}
                 </div>
             )}

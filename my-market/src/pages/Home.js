@@ -7,6 +7,7 @@ export default function Home() {
 
   const [items, setItems] = useState([]);
   const [searchParams] = useSearchParams();
+  const [popularTags, setPopularTags] = useState([]);
   const keyword = searchParams.get("keyword") || "";
 
   useEffect(() => {
@@ -33,8 +34,41 @@ export default function Home() {
     load_items();
   }, [REACT_APP_API_BASE_URL, keyword]);
 
+  useEffect(() => {
+  const loadPopularTags = async () => {
+    if (keyword) {
+      setPopularTags([]);
+      return;
+    }
+
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/browse/popular-tags?limit=10`);
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+    setPopularTags(data);
+  };
+
+  loadPopularTags();
+}, [REACT_APP_API_BASE_URL, keyword]);
+
   return (
     <div>
+      {!keyword && popularTags.length > 0 && (
+        <div>
+          <h2>人気のタグ</h2>
+          {popularTags.map((tag) => (
+            <Link
+              key={tag.name}
+              to={`/browse?keyword=${encodeURIComponent(`#${tag.name}`)}`}
+            >
+              #{tag.name} ({tag.count}){" "}
+            </Link>
+          ))}
+        </div>
+      )}
       <h1>{keyword ? `「${keyword}」での検索結果` : "商品一覧"}</h1>
       <p>
       {items.length === 0 ? (
