@@ -14,6 +14,8 @@ export default function EditItem() {
     const [description, setDescription] = useState("");
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
+    const [tagInput, setTagInput] = useState("");
+    const [tags, setTags] = useState([]);
     const [error, setError] = useState("");
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -37,6 +39,7 @@ export default function EditItem() {
             setDescription(itemData.description || "");
             setC0Id(String(itemData.c0_id || ""));
             setC1Id(String(itemData.c1_id || ""));
+            setTags(itemData.tags || []);
 
             const catRes = await fetch(`${API_BASE_URL}/categories`);
             const catData = await catRes.json();
@@ -67,6 +70,9 @@ export default function EditItem() {
             formData.append("description", description);
             formData.append("c0_id", c0Id);
             formData.append("c1_id", c1Id);
+            tags.forEach((tag) => {
+                formData.append("tags", tag);
+            });
 
             if (image) {
                 formData.append("image", image);
@@ -119,6 +125,24 @@ export default function EditItem() {
             console.error(err);
             setError(err.message);
         }
+    };
+
+    const handleAddTag = () => {
+        const tagName = tagInput.trim();
+
+        if (!tagName) return;
+
+        if (tags.length >= 10) {
+            setError("タグは最大10個までです");
+            return;
+        }
+
+        setTags((prev) => [...prev, tagName]);
+        setTagInput("");
+    };
+
+    const handleRemoveTag = (index) => {
+        setTags((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleGenerateIntroduction = async () => {
@@ -222,6 +246,29 @@ export default function EditItem() {
                             </option>
                         ))}
                 </select>
+
+                <div>
+                    <input
+                        type="text"
+                        placeholder="タグを入力"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                    />
+                    <button type="button" onClick={handleAddTag}>
+                        タグを追加
+                    </button>
+                </div>
+
+                <div>
+                    {tags.map((tag, index) => (
+                        <span key={`${tag}-${index}`}>
+                            #{tag}
+                            <button type="button" onClick={() => handleRemoveTag(index)}>
+                                削除
+                            </button>
+                        </span>
+                    ))}
+                </div>
 
                 <button type="submit">更新する</button>
             </form>

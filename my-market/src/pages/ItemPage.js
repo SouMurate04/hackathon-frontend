@@ -155,6 +155,13 @@ export default function ItemPage(){
                         <div>{item.name}</div>
                         <div>{item.price}円</div>
                         <div>{item.c0_name} / {item.c1_name}</div>
+                        {item.tags && item.tags.length > 0 && (
+                            <div>
+                                {item.tags.map((tag, index) => (
+                                    <span key={`${tag}-${index}`}>#{tag} </span>
+                                ))}
+                            </div>
+                        )}
                         </Link>
                     </li>
                     ))}

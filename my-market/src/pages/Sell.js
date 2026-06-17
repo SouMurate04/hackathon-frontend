@@ -12,6 +12,8 @@ export default function Sell(){
     const [categories, setCategories] = useState([]);
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
+    const [tagInput, setTagInput] = useState("");
+    const [tags, setTags] = useState([]);
     const navigate = useNavigate();
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -58,8 +60,9 @@ export default function Sell(){
             formData.append("image", image);
             formData.append("c0_id", c0Id);
             formData.append("c1_id", c1Id);
-            formData.append("tags", "テスト");
-            formData.append("tags", "ハッカソン");
+            tags.forEach((tag) => {
+                formData.append("tags", tag);
+            });
 
             const response = await fetch(`${API_BASE_URL}/sell`, {
             method: "POST",
@@ -115,6 +118,24 @@ export default function Sell(){
         }
     };
 
+    const handleAddTag = () => {
+        const tagName = tagInput.trim();
+
+        if (!tagName) return;
+
+        if (tags.length >= 10) {
+            setError("タグは最大10個までです");
+            return;
+        }
+
+        setTags((prev) => [...prev, tagName]);
+        setTagInput("");
+    };
+
+    const handleRemoveTag = (index) => {
+        setTags((prev) => prev.filter((_, i) => i !== index));
+    };
+
     return(
         <div>
             <h1>出品</h1>
@@ -165,6 +186,29 @@ export default function Sell(){
                         </option>
                     ))}
                 </select>
+
+                <div>
+                    <input
+                        type="text"
+                        placeholder="タグを入力"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                    />
+                    <button type="button" onClick={handleAddTag}>
+                        タグを追加
+                    </button>
+                </div>
+
+                <div>
+                    {tags.map((tag, index) => (
+                        <span key={`${tag}-${index}`}>
+                            #{tag}
+                            <button type="button" onClick={() => handleRemoveTag(index)}>
+                                削除
+                            </button>
+                        </span>
+                    ))}
+                </div>
 
                 <button type="submit">出品</button>
             </form>
