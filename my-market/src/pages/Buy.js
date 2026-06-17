@@ -268,8 +268,6 @@ export default function Buy(){
                         placeholder="例: 購入させていただきます。よろしくお願いします。"
                     />
 
-                    {error && <p>{error}</p>}
-
                     <button type="submit" disabled={!isAddressValid}>
                         購入確定
                     </button>

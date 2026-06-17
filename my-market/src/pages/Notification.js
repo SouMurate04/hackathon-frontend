@@ -6,7 +6,6 @@ export default function Notification() {
     const { notification_id } = useParams();
     const [notification, setNotification] = useState(null);
     const [replyMessage, setReplyMessage] = useState("");
-    const [error, setError] = useState("");
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -30,13 +29,12 @@ export default function Notification() {
 
         loadNotification().catch((err) => {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         });
     }, [API_BASE_URL, notification_id]);
 
     const handleReply = async () => {
         try {
-            setError("");
 
             if (!replyMessage.trim()) {
                 throw new Error("返信メッセージを入力してください");
@@ -71,13 +69,12 @@ export default function Notification() {
             alert("返信を送信しました");
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
     const handleDismiss = async () => {
         try {
-            setError("");
 
             const token = await fireAuth.currentUser.getIdToken();
 
@@ -103,11 +100,10 @@ export default function Notification() {
             alert("通知を既読にしました");
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
-    if (error) return <p>{error}</p>;
     if (!notification) return <p>Loading...</p>;
 
     return (
