@@ -15,6 +15,12 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState("");
   const navigate = useNavigate();
 
+  const [aiQuestion, setAiQuestion] = useState("");
+  const [useCurrentFilter, setUseCurrentFilter] = useState(true);
+  const [aiAnswer, setAiAnswer] = useState("");
+  const [aiItems, setAiItems] = useState([]);
+  const [aiReasons, setAiReasons] = useState({});
+
   const keyword = searchParams.get("keyword") || "";
   const queryC0Id = searchParams.get("c0_id") || "";
   const queryC1Id = searchParams.get("c1_id") || "";
@@ -114,8 +120,88 @@ export default function Home() {
     navigate(`/browse?${params.toString()}`);
   };
 
+  const handleAIRecommendation = async (e) => {
+    e.preventDefault();
+
+    if (!aiQuestion.trim()) return;
+
+    const body = {
+      question: aiQuestion,
+      use_filter: useCurrentFilter,
+      keyword: keyword || null,
+      c0_id: queryC0Id ? Number(queryC0Id) : null,
+      c1_id: queryC1Id ? Number(queryC1Id) : null,
+      min_price: queryMinPrice ? Number(queryMinPrice) : null,
+      max_price: queryMaxPrice ? Number(queryMaxPrice) : null,
+    };
+
+    const res = await fetch(`${REACT_APP_API_BASE_URL}/browse/ai-recommendation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error(text);
+      alert("AI推薦に失敗しました");
+      return;
+    }
+
+    const data = await res.json();
+
+    setAiAnswer(data.answer);
+    setAiItems(data.items);
+    setAiReasons(data.reasons || {});
+  };
+
   return (
     <div>
+      <section>
+        <h2>AIにおすすめを聞く</h2>
+
+        <form onSubmit={handleAIRecommendation}>
+          <input
+            type="text"
+            value={aiQuestion}
+            onChange={(e) => setAiQuestion(e.target.value)}
+            placeholder="例: 夏に使える安いバッグが欲しい"
+          />
+
+          <label>
+            <input
+              type="checkbox"
+              checked={useCurrentFilter}
+              onChange={(e) => setUseCurrentFilter(e.target.checked)}
+            />
+            現在の検索条件を考慮する
+          </label>
+
+          <button type="submit">おすすめを聞く</button>
+        </form>
+
+        {aiAnswer && <p>{aiAnswer}</p>}
+
+        {aiItems.length > 0 && (
+          <ul>
+            {aiItems.map((item) => (
+              <li key={item.id}>
+                <Link to={`/item/${item.id}`}>
+                  <div><img src={item.image_url} alt={item.name} /></div>
+                  <div>{item.name}</div>
+                  <div>{item.price}円</div>
+                  <div>{item.description}</div>
+                  <div>{item.c0_name} / {item.c1_name}</div>
+                  {aiReasons[item.id] && <div>{aiReasons[item.id]}</div>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {!keyword && popularTags.length > 0 && (
         <div>
           <h2>人気のタグ</h2>
