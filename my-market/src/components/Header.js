@@ -8,6 +8,7 @@ export default function Header() {
 
   const [loginUser, setLoginUser] = useState(fireAuth.currentUser);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
 
   const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -65,11 +66,34 @@ export default function Header() {
     navigate(`/user/${user.id}`);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    const trimmedKeyword = keyword.trim();
+
+    if (!trimmedKeyword) {
+      navigate("/");
+      return;
+    }
+
+    navigate(`/browse?keyword=${encodeURIComponent(trimmedKeyword)}`);
+  };
+
 
   return (
     <header>
 
       <Link to="/">Home</Link>
+
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="商品を検索"
+        />
+        <button type="submit">検索</button>
+      </form>
 
       {loginUser ? (
         <>

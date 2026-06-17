@@ -28,6 +28,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/browse" element={<Home />} />
         <Route path="/item/:id" element={<ItemPage />} />
         <Route path="/item/:id/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
         <Route path="/item/:id/edit" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />

@@ -48,7 +48,14 @@ export default function UserPage(){
                     <div>{item.price}円</div>
                     <div>{item.description}</div>
                     <div>{item.seller}</div>
-                    <div>{item.c0_name} / {item.c1_name}</div>
+                    <div>{item.c0_name}</div>
+                    {item.tags && item.tags.length > 0 && (
+                        <div>
+                            {item.tags.map((tag, index) => (
+                                <span key={`${tag}-${index}`}>#{tag} </span>
+                            ))}
+                        </div>
+                    )}
                     <div>{item.posted_at}</div>
                 </Link>
             </li>
