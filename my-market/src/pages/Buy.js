@@ -143,18 +143,6 @@ export default function Buy(){
         }
     };
 
-    const fillAddressByPostalCode = async () => {
-        const code = postalCode.replace("-", "");
-        const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${code}`);
-        const data = await res.json();
-
-        if (data.results && data.results.length > 0) {
-            const result = data.results[0];
-            setAddressCity(`${result.address1}${result.address2}`);
-            setAddressStreet(result.address3);
-        }
-    };
-
     if (!item) {
         return <p>Loading...</p>;
     }

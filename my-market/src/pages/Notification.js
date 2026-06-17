@@ -5,6 +5,7 @@ import { fireAuth } from "../firebase";
 export default function Notification() {
     const { notification_id } = useParams();
     const [notification, setNotification] = useState(null);
+    const [replyMessage, setReplyMessage] = useState("");
     const [error, setError] = useState("");
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -33,6 +34,79 @@ export default function Notification() {
         });
     }, [API_BASE_URL, notification_id]);
 
+    const handleReply = async () => {
+        try {
+            setError("");
+
+            if (!replyMessage.trim()) {
+                throw new Error("返信メッセージを入力してください");
+            }
+
+            const token = await fireAuth.currentUser.getIdToken();
+
+            const res = await fetch(`${API_BASE_URL}/notification/${notification_id}/reply`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    message: replyMessage,
+                }),
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error(text);
+                throw new Error("返信の送信に失敗しました");
+            }
+
+            setNotification((prev) => ({
+                ...prev,
+                is_read: true,
+                responded_at: new Date().toISOString(),
+            }));
+
+            setReplyMessage("");
+            alert("返信を送信しました");
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        }
+    };
+
+    const handleDismiss = async () => {
+        try {
+            setError("");
+
+            const token = await fireAuth.currentUser.getIdToken();
+
+            const res = await fetch(`${API_BASE_URL}/notification/${notification_id}/dismiss`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error(text);
+                throw new Error("通知の処理に失敗しました");
+            }
+
+            setNotification((prev) => ({
+                ...prev,
+                is_read: true,
+                responded_at: new Date().toISOString(),
+            }));
+
+            alert("通知を既読にしました");
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        }
+    };
+
     if (error) return <p>{error}</p>;
     if (!notification) return <p>Loading...</p>;
 
@@ -50,14 +124,14 @@ export default function Notification() {
                         placeholder="購入者へのメッセージ"
                     />
 
-                <button type="button" onClick={handleReply}>
-                    送信
-                </button>
+                    <button type="button" onClick={handleReply}>
+                        送信
+                    </button>
 
-                <button type="button" onClick={handleDismiss}>
-                    メッセージは送信しない
-                </button>
-            </div>
+                    <button type="button" onClick={handleDismiss}>
+                        メッセージは送信しない
+                    </button>
+                </div>
             )}
 
             {notification.item_id && (
