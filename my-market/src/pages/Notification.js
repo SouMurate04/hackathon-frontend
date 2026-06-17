@@ -42,6 +42,24 @@ export default function Notification() {
             <p>{notification.message}</p>
             <p>{new Date(notification.timestamp).toLocaleString()}</p>
 
+            {notification.requires_action && !notification.responded_at && (
+                <div>
+                    <textarea
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        placeholder="購入者へのメッセージ"
+                    />
+
+                <button type="button" onClick={handleReply}>
+                    送信
+                </button>
+
+                <button type="button" onClick={handleDismiss}>
+                    メッセージは送信しない
+                </button>
+            </div>
+            )}
+
             {notification.item_id && (
                 <Link to={`/item/${notification.item_id}`}>
                     商品ページを見る
