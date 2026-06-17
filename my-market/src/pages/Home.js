@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Home() {
 
@@ -9,11 +9,43 @@ export default function Home() {
   const [searchParams] = useSearchParams();
   const [popularTags, setPopularTags] = useState([]);
   const keyword = searchParams.get("keyword") || "";
+  const [categories, setCategories] = useState([]);
+  const [c0Id, setC0Id] = useState("");
+  const [c1Id, setC1Id] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const navigate = useNavigate();
+
+  const keyword = searchParams.get("keyword") || "";
+  const queryC0Id = searchParams.get("c0_id") || "";
+  const queryC1Id = searchParams.get("c1_id") || "";
+  const queryMinPrice = searchParams.get("min_price") || "";
+  const queryMaxPrice = searchParams.get("max_price") || "";
+  useEffect(() => {
+    setC0Id(queryC0Id);
+    setC1Id(queryC1Id);
+    setMinPrice(queryMinPrice);
+    setMaxPrice(queryMaxPrice);
+  }, [queryC0Id, queryC1Id, queryMinPrice, queryMaxPrice]);
+
+  const hasFilter = keyword || queryC0Id || queryC1Id || queryMinPrice || queryMaxPrice;
+
 
   useEffect(() => {
     const load_items = async () => {
-      const url = keyword
-        ? `${REACT_APP_API_BASE_URL}/browse?keyword=${encodeURIComponent(keyword)}`
+
+      const params = new URLSearchParams();
+
+      if (keyword) params.set("keyword", keyword);
+      if (queryC0Id) params.set("c0_id", queryC0Id);
+      if (queryC1Id) params.set("c1_id", queryC1Id);
+      if (queryMinPrice) params.set("min_price", queryMinPrice);
+      if (queryMaxPrice) params.set("max_price", queryMaxPrice);
+
+      const query = params.toString();
+
+      const url = query
+        ? `${REACT_APP_API_BASE_URL}/browse?${query}`
         : `${REACT_APP_API_BASE_URL}/browse`;
 
       const response = await fetch(url, {
@@ -32,27 +64,56 @@ export default function Home() {
     };
 
     load_items();
-  }, [REACT_APP_API_BASE_URL, keyword]);
+  }, [REACT_APP_API_BASE_URL, keyword, queryC0Id, queryC1Id, queryMinPrice, queryMaxPrice,]);
 
   useEffect(() => {
-  const loadPopularTags = async () => {
-    if (keyword) {
-      setPopularTags([]);
+    const loadCategories = async () => {
+      const res = await fetch(`${REACT_APP_API_BASE_URL}/categories`);
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setCategories(data);
+    };
+
+    loadCategories();
+  }, [REACT_APP_API_BASE_URL]);
+
+  useEffect(() => {
+    const loadPopularTags = async () => {
+      if (keyword) {
+        setPopularTags([]);
+        return;
+      }
+
+      const response = await fetch(`${REACT_APP_API_BASE_URL}/browse/popular-tags?limit=10`);
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      setPopularTags(data);
+    };
+
+    loadPopularTags();
+  }, [REACT_APP_API_BASE_URL, keyword]);
+
+  const handleFilterSearch = () => {
+    if (!c0Id && !minPrice && !maxPrice) {
       return;
     }
 
-    const response = await fetch(`${REACT_APP_API_BASE_URL}/browse/popular-tags?limit=10`);
+    const params = new URLSearchParams();
 
-    if (!response.ok) {
-      return;
-    }
+    if (keyword) params.set("keyword", keyword);
+    if (c0Id) params.set("c0_id", c0Id);
+    if (c1Id) params.set("c1_id", c1Id);
+    if (minPrice) params.set("min_price", minPrice);
+    if (maxPrice) params.set("max_price", maxPrice);
 
-    const data = await response.json();
-    setPopularTags(data);
+    navigate(`/browse?${params.toString()}`);
   };
-
-  loadPopularTags();
-}, [REACT_APP_API_BASE_URL, keyword]);
 
   return (
     <div>
@@ -69,7 +130,61 @@ export default function Home() {
           ))}
         </div>
       )}
-      <h1>{keyword ? `「${keyword}」での検索結果` : "商品一覧"}</h1>
+      <h1>{hasFilter ? "検索結果" : "商品一覧"}</h1>
+      {keyword && <p>「{keyword}」での検索結果</p>}
+
+      <nav>
+        <h2>絞り込み</h2>
+
+        <select
+          value={c0Id}
+          onChange={(e) => {
+            setC0Id(e.target.value);
+            setC1Id("");
+          }}
+        >
+          <option value="">大カテゴリを選択</option>
+          {categories.map((c0) => (
+            <option key={c0.id} value={c0.id}>
+              {c0.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={c1Id}
+          onChange={(e) => setC1Id(e.target.value)}
+          disabled={!c0Id}
+        >
+          <option value="">小カテゴリを選択</option>
+          {categories
+            .find((c0) => String(c0.id) === String(c0Id))
+            ?.children.map((c1) => (
+              <option key={c1.id} value={c1.id}>
+                {c1.name}
+              </option>
+            ))}
+        </select>
+
+        <input
+          type="number"
+          placeholder="最低価格"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+
+        <input
+          type="number"
+          placeholder="最高価格"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
+
+        <button type="button" onClick={handleFilterSearch}>
+          この条件で検索
+        </button>
+      </nav>
+
       <p>
       {items.length === 0 ? (
         <p>該当する商品はありません</p>
