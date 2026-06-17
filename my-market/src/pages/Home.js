@@ -159,6 +159,9 @@ export default function Home() {
 
   return (
     <div>
+
+      <Link to="/subscription">フォロー中の出品を見る</Link>
+
       <section>
         <h2>AIにおすすめを聞く</h2>
 

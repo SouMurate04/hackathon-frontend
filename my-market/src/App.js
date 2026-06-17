@@ -15,6 +15,8 @@ import Chat from "./pages/Chat";
 import Buy from "./pages/Buy";
 import NotificationAll from "./pages/NotificationAll";
 import Notification from "./pages/Notification";
+import FollowList from './pages/FollowList';
+import Subscription from './pages/Subscription';
 
 import Loader from "./components/Loader";
 import Header from "./components/Header";
@@ -33,9 +35,12 @@ function App() {
         <Route path="/item/:id/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
         <Route path="/item/:id/edit" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
         <Route path="/item/:id/chat" element={<Chat />} />
+        <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
 
 
         <Route path="/user/:id" element={<UserPage />} />
+        <Route path="/user/:id/followings" element={<FollowList type="followings" />} />
+        <Route path="/user/:id/followers" element={<FollowList type="followers" />} />
 
         <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
 

@@ -11,6 +11,12 @@ export default function UserPage(){
     const [likedItems, setLikedItems] = useState([]);
     const [boughtItems, setBoughtItems] = useState([]);
 
+    const [followSummary, setFollowSummary] = useState({
+        followings_count: 0,
+        followers_count: 0,
+    });
+    const [isFollowing, setIsFollowing] = useState(false);
+
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
     const isMyPage = fireAuth.currentUser && user?.firebase_uid === fireAuth.currentUser.uid;
 
@@ -139,6 +145,71 @@ export default function UserPage(){
         });
     }, [REACT_APP_API_BASE_URL, user]);
 
+    useEffect(() => {
+        const loadFollowSummary = async () => {
+            const res = await fetch(`${REACT_APP_API_BASE_URL}/follow/${id}/summary`);
+            if (!res.ok) return;
+
+            const data = await res.json();
+            setFollowSummary(data);
+        };
+
+        if (id) {
+            loadFollowSummary();
+        }
+    }, [REACT_APP_API_BASE_URL, id]);
+
+    useEffect(() => {
+        const loadFollowStatus = async () => {
+            if (!user || !fireAuth.currentUser) return;
+            if (user.firebase_uid === fireAuth.currentUser.uid) return;
+
+            const token = await fireAuth.currentUser.getIdToken();
+
+            const res = await fetch(`${REACT_APP_API_BASE_URL}/follow/${id}/status`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) return;
+
+            const data = await res.json();
+            setIsFollowing(data.is_following);
+        };
+
+        loadFollowStatus();
+    }, [REACT_APP_API_BASE_URL, id, user]);
+
+    const handleFollow = async () => {
+        if (!fireAuth.currentUser) {
+            alert("フォローするにはログインしてください");
+            return;
+        }
+
+        const token = await fireAuth.currentUser.getIdToken();
+
+        const res = await fetch(`${REACT_APP_API_BASE_URL}/follow/${id}`, {
+            method: isFollowing ? "DELETE" : "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!res.ok) {
+            alert("フォロー状態の更新に失敗しました");
+            return;
+        }
+
+        const data = await res.json();
+        setIsFollowing(data.is_following);
+
+        setFollowSummary((prev) => ({
+            ...prev,
+            followers_count: prev.followers_count + (data.is_following ? 1 : -1),
+        }));
+    };
+
     if(!user){
         return <p>Loading...</p>;
     }
@@ -150,6 +221,22 @@ export default function UserPage(){
             <img src={user.icon_url} alt={user.name} />
             <div>{user.bio}</div>
             <div>{isMyPage && <Link to="/edit-profile">プロフィールを編集</Link>}</div>
+
+            <div>
+                <Link to={`/user/${id}/followings`}>
+                    フォロー {followSummary.followings_count}
+                </Link>
+                {" / "}
+                <Link to={`/user/${id}/followers`}>
+                    フォロワー {followSummary.followers_count}
+                </Link>
+            </div>
+
+            {fireAuth.currentUser && user.firebase_uid !== fireAuth.currentUser.uid && (
+                <button type="button" onClick={handleFollow}>
+                    {isFollowing ? "フォロー解除" : "フォローする"}
+                </button>
+            )}
 
             <h1>商品一覧</h1>
             {items ? (
