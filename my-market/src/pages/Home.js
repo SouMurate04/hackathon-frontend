@@ -8,7 +8,6 @@ export default function Home() {
   const [items, setItems] = useState([]);
   const [searchParams] = useSearchParams();
   const [popularTags, setPopularTags] = useState([]);
-  const keyword = searchParams.get("keyword") || "";
   const [categories, setCategories] = useState([]);
   const [c0Id, setC0Id] = useState("");
   const [c1Id, setC1Id] = useState("");
