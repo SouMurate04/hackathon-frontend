@@ -12,6 +12,7 @@ export default function Sell(){
     const [categories, setCategories] = useState([]);
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
+    const [images, setImages] = useState([null]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
     const navigate = useNavigate();
@@ -57,9 +58,19 @@ export default function Sell(){
             formData.append("name", name);
             formData.append("price", price);
             formData.append("description", description);
-            formData.append("image", image);
             formData.append("c0_id", c0Id);
             formData.append("c1_id", c1Id);
+
+            const selectedImages = images.filter(Boolean);
+
+            if (selectedImages.length === 0) {
+                throw new Error("画像を1枚以上選択してください");
+            }
+
+            selectedImages.forEach((image) => {
+                formData.append("images", image);
+            });
+
             tags.forEach((tag) => {
                 formData.append("tags", tag);
             });
@@ -136,12 +147,48 @@ export default function Sell(){
         setTags((prev) => prev.filter((_, i) => i !== index));
     };
 
+    const handleImageChange = (index, file) => {
+        setImages((prev) => {
+            const next = [...prev];
+            next[index] = file;
+
+            if (file && index === prev.length - 1) {
+                next.push(null);
+            }
+
+            return next;
+        });
+    };
+
+    const handleRemoveImage = (index) => {
+        setImages((prev) => {
+            const next = prev.filter((_, i) => i !== index);
+            return next.length > 0 ? next : [null];
+        });
+    };
+
     return(
         <div>
             <h1>出品</h1>
             <form onSubmit={handleSell}>
-                <input type="file" accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])} />
+            {images.map((image, index) => (
+                <div key={index}>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(index, e.target.files[0])}
+                    />
+
+                    {image && (
+                        <>
+                            <img src={URL.createObjectURL(image)} alt="preview" />
+                            <button type="button" onClick={() => handleRemoveImage(index)}>
+                                画像を削除
+                            </button>
+                        </>
+                    )}
+                </div>
+            ))}
 
                 <button type="button" onClick={handleGenerateIntroduction}>
                     紹介文を生成

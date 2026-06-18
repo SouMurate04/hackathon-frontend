@@ -8,7 +8,8 @@ export default function EditItem() {
 
     const [item, setItem] = useState(null);
     const [categories, setCategories] = useState([]);
-    const [image, setImage] = useState(null);
+    const [existingImageUrls, setExistingImageUrls] = useState([]);
+    const [newImages, setNewImages] = useState([null]);
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
@@ -40,6 +41,7 @@ export default function EditItem() {
             setC0Id(String(itemData.c0_id || ""));
             setC1Id(String(itemData.c1_id || ""));
             setTags(itemData.tags || []);
+            setExistingImageUrls(itemData.image_urls || (itemData.image_url ? [itemData.image_url] : []));
 
             const catRes = await fetch(`${API_BASE_URL}/categories`);
             const catData = await catRes.json();
@@ -74,9 +76,19 @@ export default function EditItem() {
                 formData.append("tags", tag);
             });
 
-            if (image) {
-                formData.append("image", image);
+            const selectedNewImages = newImages.filter(Boolean);
+
+            if (existingImageUrls.length + selectedNewImages.length === 0) {
+                throw new Error("画像を1枚以上設定してください");
             }
+
+            existingImageUrls.forEach((url) => {
+                formData.append("existing_image_urls", url);
+            });
+
+            selectedNewImages.forEach((image) => {
+                formData.append("images", image);
+            });
 
             const res = await fetch(`${API_BASE_URL}/sell/${id}`, {
                 method: "PUT",
@@ -179,6 +191,30 @@ export default function EditItem() {
         }
     };
 
+    const handleRemoveExistingImage = (index) => {
+        setExistingImageUrls((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleNewImageChange = (index, file) => {
+        setNewImages((prev) => {
+            const next = [...prev];
+            next[index] = file;
+
+            if (file && index === prev.length - 1) {
+                next.push(null);
+            }
+
+            return next;
+        });
+    };
+
+    const handleRemoveNewImage = (index) => {
+        setNewImages((prev) => {
+            const next = prev.filter((_, i) => i !== index);
+            return next.length > 0 ? next : [null];
+        });
+    };
+
     if (error) return <p>{error}</p>;
     if (!item) return <p>Loading...</p>;
 
@@ -187,13 +223,37 @@ export default function EditItem() {
             <h1>商品情報を編集</h1>
 
             <form onSubmit={handleUpdate}>
-                <img src={item.image_url} alt={item.name} />
+                <h2>現在の画像</h2>
 
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
-                />
+                {existingImageUrls.map((url, index) => (
+                    <div key={url}>
+                        <img src={url} alt={`existing-${index}`} />
+                        <button type="button" onClick={() => handleRemoveExistingImage(index)}>
+                            画像を削除
+                        </button>
+                    </div>
+                ))}
+
+                <h2>新しい画像を追加</h2>
+
+                {newImages.map((image, index) => (
+                    <div key={index}>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleNewImageChange(index, e.target.files[0])}
+                        />
+
+                        {image && (
+                            <>
+                                <img src={URL.createObjectURL(image)} alt="preview" />
+                                <button type="button" onClick={() => handleRemoveNewImage(index)}>
+                                    画像を削除
+                                </button>
+                            </>
+                        )}
+                    </div>
+                ))}
 
                 <button type="button" onClick={handleGenerateIntroduction}>
                     紹介文を生成

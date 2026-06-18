@@ -124,7 +124,17 @@ export default function ItemPage(){
     return(
         <div>
             <h1>{item.name}</h1>
-            <img src={item.image_url} alt={item.name} />
+            {item.image_urls && item.image_urls.length > 0 ? (
+                <ul>
+                    {item.image_urls.map((url, index) => (
+                        <li key={`${url}-${index}`}>
+                            <img src={url} alt={`${item.name}-${index + 1}`} />
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <img src={item.image_url} alt={item.name} />
+            )}
             <p>{item.price}円</p>
             <p>{item.description}</p>
             <p>出品者: {item.seller}</p>
