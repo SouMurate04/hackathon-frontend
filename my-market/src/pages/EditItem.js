@@ -161,12 +161,14 @@ export default function EditItem() {
         setError("");
 
         try {
-            if (!images) {
+            const selectedImage = newImages.find((image) => image);
+
+            if (!selectedImage) {
                 throw new Error("紹介文を生成するには新しい画像を選択してください");
             }
 
             const formData = new FormData();
-            formData.append("images", images);
+            formData.append("image", selectedImage);
 
             const response = await fetch(`${API_BASE_URL}/sell/recommend`, {
                 method: "POST",

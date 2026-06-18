@@ -4,7 +4,6 @@ import { fireAuth } from "../firebase";
 
 
 export default function Sell(){
-    const [image, setImage] = useState(null);
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
@@ -46,7 +45,7 @@ export default function Sell(){
         const priceNum = Number(price);
 
         try {
-            if(!name || !price || !description || !image || !c0Id || !c1Id){
+            if(!name || !price || !description || !c0Id || !c1Id){
                 throw new Error("空の項目があります");
             }else if(!Number.isSafeInteger(priceNum) || priceNum <= 0){
                 throw new Error("価格が正しくありません");
@@ -99,12 +98,14 @@ export default function Sell(){
         setError("");
 
         try {
-            if (!image) {
+            const selectedImage = images.find((image) => image);
+
+            if (!selectedImage) {
                 throw new Error("紹介文を生成するには画像を選択してください");
             }
 
             const formData = new FormData();
-            formData.append("image", image);
+            formData.append("image", selectedImage);
 
             const response = await fetch(`${API_BASE_URL}/sell/recommend`, {
                 method: "POST",
