@@ -11,7 +11,7 @@ export default function Sell(){
     const [categories, setCategories] = useState([]);
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
-    const [images, setImages] = useState([null]);
+    const [images, setImages] = useState([]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
     const navigate = useNavigate();
@@ -38,6 +38,16 @@ export default function Sell(){
     loadCategories();
     }, [API_BASE_URL]);
 
+    const handleAddImages = (files) => {
+        const newImageItems = Array.from(files).map((file) => ({
+            type: "new",
+            file,
+            previewUrl: URL.createObjectURL(file),
+        }));
+
+        setImages((prev) => [...prev, ...newImageItems]);
+    };
+
     const handleSell = async (e) => {
         e.preventDefault();
         setError("");
@@ -62,12 +72,12 @@ export default function Sell(){
 
             const selectedImages = images.filter(Boolean);
 
-            if (selectedImages.length === 0) {
+            if (images.length === 0) {
                 throw new Error("画像を1枚以上選択してください");
             }
 
-            selectedImages.forEach((image) => {
-                formData.append("images", image);
+            images.forEach((image) => {
+                formData.append("images", image.file);
             });
 
             tags.forEach((tag) => {
@@ -98,14 +108,14 @@ export default function Sell(){
         setError("");
 
         try {
-            const selectedImage = images.find((image) => image);
+            const selectedImage = images[0];
 
             if (!selectedImage) {
                 throw new Error("紹介文を生成するには画像を選択してください");
             }
 
             const formData = new FormData();
-            formData.append("image", selectedImage);
+            formData.append("image", selectedImage.file);
 
             const response = await fetch(`${API_BASE_URL}/sell/recommend`, {
                 method: "POST",
@@ -162,9 +172,20 @@ export default function Sell(){
     };
 
     const handleRemoveImage = (index) => {
+        setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const moveImage = (index, direction) => {
         setImages((prev) => {
-            const next = prev.filter((_, i) => i !== index);
-            return next.length > 0 ? next : [null];
+            const next = [...prev];
+            const targetIndex = index + direction;
+
+            if (targetIndex < 0 || targetIndex >= next.length) {
+                return prev;
+            }
+
+            [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+            return next;
         });
     };
 
@@ -174,20 +195,49 @@ export default function Sell(){
             <form onSubmit={handleSell}>
             {images.map((image, index) => (
                 <div key={index}>
+                <div>
                     <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleImageChange(index, e.target.files[0])}
+                        multiple
+                        onChange={(e) => {
+                            handleAddImages(e.target.files);
+                            e.target.value = "";
+                        }}
                     />
 
-                    {image && (
-                        <>
-                            <img src={URL.createObjectURL(image)} alt="preview" />
-                            <button type="button" onClick={() => handleRemoveImage(index)}>
-                                画像を削除
-                            </button>
-                        </>
-                    )}
+                    {images.length === 0 && <p>画像を1枚以上選択してください</p>}
+
+                    <ul>
+                        {images.map((image, index) => (
+                            <li key={image.previewUrl}>
+                                {index === 0 && <strong>メイン画像</strong>}
+
+                                <img src={image.previewUrl} alt={`preview-${index}`} />
+
+                                <button
+                                    type="button"
+                                    onClick={() => moveImage(index, -1)}
+                                    disabled={index === 0}
+                                >
+                                    前へ
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => moveImage(index, 1)}
+                                    disabled={index === images.length - 1}
+                                >
+                                    後ろへ
+                                </button>
+
+                                <button type="button" onClick={() => handleRemoveImage(index)}>
+                                    画像を削除
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
                 </div>
             ))}
 
