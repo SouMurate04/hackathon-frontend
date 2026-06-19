@@ -1,0 +1,250 @@
+body {
+  margin: 0;
+  text-align: center;
+  background-color: #EFEFEF;
+  min-height: 100vh;
+  font-size: calc(10px + 2vmin);
+  color: #333333;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.ai-recommend-fab {
+  position: fixed;
+  top: 120px;
+  right: 28px;
+  z-index: 900;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 999px;
+  background: #333333;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.ai-recommend-fab:hover {
+  background: #555555;
+}
+
+.ai-recommend-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: 96px 24px 32px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.ai-recommend-panel {
+  width: min(860px, 100%);
+  max-height: calc(100vh - 128px);
+  overflow-y: auto;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.24);
+}
+
+.ai-recommend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ai-recommend-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333333;
+}
+
+.ai-recommend-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 999px;
+  background: #eeeeee;
+  color: #444444;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ai-recommend-close:hover {
+  background: #dddddd;
+}
+
+.ai-recommend-form {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.ai-recommend-input {
+  width: 100%;
+  min-height: 96px;
+  padding: 14px;
+  box-sizing: border-box;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+.ai-recommend-input:focus {
+  outline: none;
+  border-color: #777777;
+  box-shadow: 0 0 0 3px rgba(80, 80, 80, 0.12);
+}
+
+.ai-filter-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: flex-start;
+  color: #666666;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ai-filter-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: #333333;
+  cursor: pointer;
+}
+
+.ai-recommend-submit {
+  justify-self: flex-end;
+  height: 42px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 8px;
+  background: #333333;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ai-recommend-submit:hover {
+  background: #555555;
+}
+
+.ai-answer {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #f3f3f3;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.ai-item-grid {
+  width: 100%;
+  margin: 20px 0 0;
+}
+
+.home-top-section {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 32px auto 20px;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.popular-tags-panel {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.home-section-title {
+  margin: 0 0 14px;
+  font-size: 20px;
+  color: #333333;
+}
+
+.popular-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.home-action-row {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.subscription-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  color: #555555;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.subscription-link:hover {
+  background: #eeeeee;
+  color: #222222;
+}
+
+.home-title-block {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.home-title-block h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333333;
+}
+
+.home-title-block p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #666666;
+}
+
+.browse-title-section {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 28px auto 12px;
+  text-align: left;
+}
+
+.browse-title-section h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333333;
+}
+
+.browse-title-section p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #666666;
+}

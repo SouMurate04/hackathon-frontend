@@ -143,6 +143,7 @@ export default function ItemPage(){
                 <div>
                     {item.tags.map((tag, index) => (
                         <Link
+                            className="item-tag"
                             key={`${tag}-${index}`}
                             to={`/browse?keyword=${encodeURIComponent(`#${tag}`)}`}
                         >
@@ -169,18 +170,21 @@ export default function ItemPage(){
             <h2>関連商品</h2>
 
             {recommendedItems.length > 0 ? (
-                <ul>
-                    {recommendedItems.map((item) => (
-                    <li key={item.id}>
-                        <Link to={`/item/${item.id}`}>
-                        <img src={item.image_url} alt={item.name} />
-                        <div>{item.name}</div>
-                        <div>{item.price}円</div>
-                        <div>{item.c0_name} / {item.c1_name}</div>
-                        </Link>
-                    </li>
-                    ))}
-                </ul>
+            <ul className="item-grid">
+            {recommendedItems.map((item) => (
+                <li key={item.id} className="item-card">
+                <Link to={`/item/${item.id}`} className="item-card-link">
+                    <div className="item-image-wrap">
+                    <img className="item-image" src={item.image_url} alt={item.name} />
+                    </div>
+
+                    <div className="item-title">{item.name}</div>
+                    <div className="item-price">{item.price}円</div>
+                    <div className="item-meta">{item.c0_name} / {item.c1_name}</div>
+                </Link>
+                </li>
+            ))}
+            </ul>
                 ) : (
                 <p>関連商品はまだありません</p>
             )}

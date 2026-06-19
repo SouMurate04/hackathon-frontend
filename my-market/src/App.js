@@ -1,6 +1,7 @@
-import './App.css';
+import './styles/Header.css';
+import './styles/Home.css'
+import './styles/Item.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 
 import Home from "./pages/Home";
 import EditProfile from "./pages/EditProfile";

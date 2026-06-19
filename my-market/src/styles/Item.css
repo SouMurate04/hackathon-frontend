@@ -1,0 +1,141 @@
+.item-grid {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 24px auto;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  list-style: none;
+  justify-content: flex-start;
+}
+
+.item-card {
+  width: 220px;
+  min-height: 330px;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.item-card-link {
+  display: block;
+  height: 100%;
+  color: #444444;
+  text-decoration: none;
+}
+
+.item-card-link:hover {
+  color: #222222;
+}
+
+.item-image-wrap {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #eeeeee;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-title {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333333;
+  line-height: 1.35;
+}
+
+.item-price {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #555555;
+}
+
+.item-meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #777777;
+  line-height: 1.35;
+}
+
+.item-tags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.item-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #4267aa;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sold-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.item-tags .item-tag:nth-child(8n + 1) {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.item-tags .item-tag:nth-child(8n + 2) {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.item-tags .item-tag:nth-child(8n + 3) {
+  background: #fef3c7;
+  color: #a16207;
+}
+
+.item-tags .item-tag:nth-child(8n + 4) {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.item-tags .item-tag:nth-child(8n + 5) {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.item-tags .item-tag:nth-child(8n + 6) {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.item-tags .item-tag:nth-child(8n + 7) {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.item-tags .item-tag:nth-child(8n + 8) {
+  background: #fce7f3;
+  color: #be185d;
+}

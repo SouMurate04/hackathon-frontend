@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 
 export default function Home() {
 
@@ -16,10 +16,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   const [aiQuestion, setAiQuestion] = useState("");
-  const [useCurrentFilter, setUseCurrentFilter] = useState(true);
+  const [useCurrentFilter, setUseCurrentFilter] = useState(false);
   const [aiAnswer, setAiAnswer] = useState("");
   const [aiItems, setAiItems] = useState([]);
   const [aiReasons, setAiReasons] = useState({});
+  const [isAIRecommendOpen, setIsAIRecommendOpen] = useState(false);
+
+  const location = useLocation();
+  const isTopPage = location.pathname === "/";
 
   const keyword = searchParams.get("keyword") || "";
   const queryC0Id = searchParams.get("c0_id") || "";
@@ -160,66 +164,130 @@ export default function Home() {
   return (
     <div>
 
-      <Link to="/subscription">フォロー中の出品を見る</Link>
+      <button
+        type="button"
+        className="ai-recommend-fab"
+        onClick={() => setIsAIRecommendOpen(true)}
+      >
+        AIに相談
+      </button>
 
-      <section>
-        <h2>AIにおすすめを聞く</h2>
+      {isAIRecommendOpen && (
+        <div
+          className="ai-recommend-overlay"
+          onClick={() => setIsAIRecommendOpen(false)}
+        >
+          <section
+            className="ai-recommend-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="ai-recommend-header">
+              <h2>AIにおすすめを聞く</h2>
+              <button
+                type="button"
+                className="ai-recommend-close"
+                onClick={() => setIsAIRecommendOpen(false)}
+              >
+                ×
+              </button>
+            </div>
 
-        <form onSubmit={handleAIRecommendation}>
-          <input
-            type="text"
-            value={aiQuestion}
-            onChange={(e) => setAiQuestion(e.target.value)}
-            placeholder="例: 夏に使える安いバッグが欲しい"
-          />
+            <form onSubmit={handleAIRecommendation} className="ai-recommend-form">
+              <textarea
+                value={aiQuestion}
+                onChange={(e) => setAiQuestion(e.target.value)}
+                placeholder="例: 夏に使える安いバッグが欲しい"
+                className="ai-recommend-input"
+              />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={useCurrentFilter}
-              onChange={(e) => setUseCurrentFilter(e.target.checked)}
-            />
-            現在の検索条件を考慮する
-          </label>
+              <label className="ai-filter-option">
+                <input
+                  type="checkbox"
+                  checked={useCurrentFilter}
+                  onChange={(e) => setUseCurrentFilter(e.target.checked)}
+                />
+                <span>現在の検索条件を考慮する</span>
+              </label>
 
-          <button type="submit">おすすめを聞く</button>
-        </form>
+              <button type="submit" className="ai-recommend-submit">
+                おすすめを聞く
+              </button>
+            </form>
 
-        {aiAnswer && <p>{aiAnswer}</p>}
+            {aiAnswer && (
+              <p className="ai-answer">
+                {aiAnswer}
+              </p>
+            )}
 
-        {aiItems.length > 0 && (
-          <ul>
-            {aiItems.map((item) => (
-              <li key={item.id}>
-                <Link to={`/item/${item.id}`}>
-                  <div><img src={item.image_url} alt={item.name} /></div>
-                  <div>{item.name}</div>
-                  <div>{item.price}円</div>
-                  <div>{item.description}</div>
-                  <div>{item.c0_name} / {item.c1_name}</div>
-                  {aiReasons[item.id] && <div>{aiReasons[item.id]}</div>}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+            {aiItems.length > 0 && (
+              <ul className="item-grid ai-item-grid">
+                {aiItems.map((item) => (
+                  <li key={item.id} className="item-card">
+                    <Link to={`/item/${item.id}`} className="item-card-link">
+                      {aiReasons[item.id] && (
+                        <div className="item-meta">{aiReasons[item.id]}</div>
+                      )}
 
-      {!keyword && popularTags.length > 0 && (
-        <div>
-          <h2>人気のタグ</h2>
-          {popularTags.map((tag) => (
-            <Link
-              key={tag.name}
-              to={`/browse?keyword=${encodeURIComponent(`#${tag.name}`)}`}
-            >
-              #{tag.name} ({tag.count}){" "}
-            </Link>
-          ))}
+                      <div className="item-image-wrap">
+                        <img className="item-image" src={item.image_url} alt={item.name} />
+                      </div>
+
+                      <div className="item-title">{item.name}</div>
+                      <div className="item-price">{item.price}円</div>
+                      <div className="item-meta">{item.seller}</div>
+                      <div className="item-meta">{item.c0_name} / {item.c1_name}</div>
+
+                      {item.tags && item.tags.length > 0 && (
+                        <div className="item-tags">
+                          {item.tags.map((tag, index) => (
+                            <span className="item-tag" key={`${tag}-${index}`}>
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
       )}
-      <h1>{hasFilter ? "検索結果" : "商品一覧"}</h1>
-      {keyword && <p>「{keyword}」での検索結果</p>}
+
+      {isTopPage && (
+        <section className="home-top-section">
+          {!keyword && popularTags.length > 0 && (
+            <div className="popular-tags-panel">
+              <h2 className="home-section-title">How's it going?</h2>
+
+              <div className="popular-tags-list item-tags" >
+                {popularTags.map((tag) => (
+                  <Link
+                    className="item-tag"
+                    key={tag.name}
+                    to={`/browse?keyword=${encodeURIComponent(`#${tag.name}`)}`}
+                  >
+                    #{tag.name} ({tag.count})
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="home-action-row">
+            <Link to="/subscription" className="subscription-link">
+              フォロー中のユーザーの出品
+            </Link>
+          </div>
+        </section>
+      )}
+
+      <section className="browse-title-section">
+        <h1>{hasFilter ? "検索結果" : "商品一覧"}</h1>
+        {keyword && <p>「{keyword}」での検索結果</p>}
+      </section>
 
       <nav>
         <h2>絞り込み</h2>
@@ -277,26 +345,34 @@ export default function Home() {
       {items.length === 0 ? (
         <p>該当する商品はありません</p>
       ) : (
-        <ul>{items.map((item) => (
-        <li key={item.id}>
-          <Link to={`/item/${item.id}`}>
-          <div><img src={item.image_url} alt={item.name} /></div>
-          <div>{item.name}</div>
-          <div>{item.price}</div>
-          <div>{item.description}</div>
-          <div>{item.seller}</div>
-          <div>{item.c0_name}</div>
-          {item.tags && item.tags.length > 0 && (
-            <div>
-              {item.tags.map((tag, index) => (
-                <span key={`${tag}-${index}`}>#{tag} </span>
-              ))}
-            </div>
-          )}
-          <div>{item.posted_at}</div>
-          </Link>
-        </li>
-      ))}</ul>
+      <ul className="item-grid">
+        {items.map((item) => (
+          <li key={item.id} className="item-card">
+            <Link to={`/item/${item.id}`} className="item-card-link">
+              <div className="item-image-wrap">
+                <img className="item-image" src={item.image_url} alt={item.name} />
+              </div>
+
+              <div className="item-title">{item.name}</div>
+              <div className="item-price">{item.price}円</div>
+              <div className="item-meta">{item.seller}</div>
+              <div className="item-meta">{item.c0_name} / {item.c1_name}</div>
+
+              {item.tags && item.tags.length > 0 && (
+                <div className="item-tags">
+                  {item.tags.map((tag, index) => (
+                    <span className="item-tag" key={`${tag}-${index}`}>
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="item-meta">{item.posted_at}</div>
+            </Link>
+          </li>
+        ))}
+      </ul>
       )}
       </p>
     </div>

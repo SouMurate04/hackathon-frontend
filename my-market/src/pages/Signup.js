@@ -44,7 +44,7 @@ export default function Signup() {
       alert("登録確認メールを送信しました。メールを確認してください。");
       navigate("/");
     } catch (err) {
-      console.error(err);
+      console.error(err.message);
       setError(err.message);
     }
   };
