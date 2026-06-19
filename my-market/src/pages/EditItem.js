@@ -9,8 +9,6 @@ export default function EditItem() {
     const [item, setItem] = useState(null);
     const [categories, setCategories] = useState([]);
     const [images, setImages] = useState([]);
-    const [existingImageUrls, setExistingImageUrls] = useState([]);
-    const [newImages, setNewImages] = useState([null]);
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
@@ -82,8 +80,6 @@ export default function EditItem() {
             tags.forEach((tag) => {
                 formData.append("tags", tag);
             });
-
-            const selectedNewImages = newImages.filter(Boolean);
 
             if (images.length === 0) {
                 throw new Error("画像を1枚以上設定してください");
@@ -170,7 +166,7 @@ export default function EditItem() {
         setError("");
 
         try {
-            const selectedImage = newImages.find((image) => image);
+            const selectedImage = images.find((image) => image);
 
             if (!selectedImage) {
                 throw new Error("紹介文を生成するには新しい画像を選択してください");
@@ -200,23 +196,6 @@ export default function EditItem() {
             console.error(err);
             setError(err.message);
         }
-    };
-
-    const handleRemoveExistingImage = (index) => {
-        setExistingImageUrls((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    const handleNewImageChange = (index, file) => {
-        setNewImages((prev) => {
-            const next = [...prev];
-            next[index] = file;
-
-            if (file && index === prev.length - 1) {
-                next.push(null);
-            }
-
-            return next;
-        });
     };
 
     const handleAddImages = (files) => {

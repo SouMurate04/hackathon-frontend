@@ -70,8 +70,6 @@ export default function Sell(){
             formData.append("c0_id", c0Id);
             formData.append("c1_id", c1Id);
 
-            const selectedImages = images.filter(Boolean);
-
             if (images.length === 0) {
                 throw new Error("画像を1枚以上選択してください");
             }
@@ -156,19 +154,6 @@ export default function Sell(){
 
     const handleRemoveTag = (index) => {
         setTags((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    const handleImageChange = (index, file) => {
-        setImages((prev) => {
-            const next = [...prev];
-            next[index] = file;
-
-            if (file && index === prev.length - 1) {
-                next.push(null);
-            }
-
-            return next;
-        });
     };
 
     const handleRemoveImage = (index) => {
