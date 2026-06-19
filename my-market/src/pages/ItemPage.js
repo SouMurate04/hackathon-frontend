@@ -1,6 +1,8 @@
 import { useEffect , useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fireAuth } from "../firebase";
+import chatIcon from "../images/Chat.png";
+import likeIcon from "../images/Like.png";
 
 export default function ItemPage(){
 
@@ -9,8 +11,13 @@ export default function ItemPage(){
     const [liked, setLiked] = useState(false);
     const [recommendedItems, setRecommendedItems] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
     const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+
+    useEffect(() => {
+        setSelectedImageIndex(0);
+    }, [id]);
 
     useEffect(() => {
         const load_item = async () => {
@@ -121,72 +128,161 @@ export default function ItemPage(){
         return <p>Loading...</p>;
     }
 
+    const imageUrls =
+        item.image_urls && item.image_urls.length > 0
+            ? item.image_urls
+            : item.image_url
+                ? [item.image_url]
+                : [];
+
+    const selectedImage = imageUrls[selectedImageIndex] || imageUrls[0];
+
+    const isSeller = currentUser && item.seller_id === currentUser.id;
+
+    document.title = `${item.name} | WhatsOnSale`;
+
     return(
-        <div>
-            <h1>{item.name}</h1>
-            {item.image_urls && item.image_urls.length > 0 ? (
-                <ul>
-                    {item.image_urls.map((url, index) => (
-                        <li key={`${url}-${index}`}>
-                            <img src={url} alt={`${item.name}-${index + 1}`} />
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <img src={item.image_url} alt={item.name} />
-            )}
-            <p>{item.price}円</p>
-            <p>{item.description}</p>
-            <p>出品者: {item.seller}</p>
-            <p>カテゴリ: {item.c0_name} / {item.c1_name}</p>
-            {item.tags && item.tags.length > 0 && (
-                <div>
-                    {item.tags.map((tag, index) => (
-                        <Link
-                            className="item-tag"
-                            key={`${tag}-${index}`}
-                            to={`/browse?keyword=${encodeURIComponent(`#${tag}`)}`}
-                        >
-                            #{tag}{" "}
-                        </Link>
-                    ))}
+        <div className="item-detail-page">
+            <section className="item-detail-main">
+                <div className="item-detail-images">
+                    <div className="item-detail-main-image-wrap">
+                        {selectedImage ? (
+                            <img
+                                className="item-detail-main-image"
+                                src={selectedImage}
+                                alt={item.name}
+                            />
+                        ) : (
+                            <div className="item-detail-no-image">No Image</div>
+                        )}
+                    </div>
+
+                    {imageUrls.length > 1 && (
+                        <ul className="item-detail-thumbnails">
+                            {imageUrls.map((url, index) => (
+                                <li key={`${url}-${index}`} className="item-detail-thumbnail-item">
+                                <button
+                                type="button"
+                                className={`item-detail-thumbnail-button ${
+                                    selectedImageIndex === index ? "active" : ""
+                                }`}
+                                onClick={() => setSelectedImageIndex(index)}
+                                >
+                                    <img
+                                        className="item-detail-thumbnail-image"
+                                        src={url}
+                                        alt={`${item.name}-${index + 1}`}
+                                    />
+                                </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
-            )}
-            <Link to={`/item/${id}/chat`}>チャットを見る</Link>
-            <button type="button" onClick={handleLike}>
-                {liked ? "いいね済み" : "いいね"}
-            </button>
-            <div>{!item.buyer_id ?(
-            <Link to={`/item/${id}/buy`}>購入する</Link>
-            ):(
-            <p>この商品は購入済みです</p>
-            )}</div>
-            <>
-            {currentUser && item.seller_id === currentUser.id && !item.buyer_id && (
-                <Link to={`/item/${id}/edit`}>商品情報を編集</Link>
-            )}
-            </>
+
+                <div className="item-detail-info">
+                    <h1 className="item-detail-title">{item.name}</h1>
+
+                    <p className="item-detail-meta">
+                        出品者:{" "}
+                        <Link className="item-detail-link" to={`/user/${item.seller_id}`}>
+                        {item.seller}
+                        </Link>
+                    </p>
+
+                    <p className="item-detail-price">{item.price}円</p>
+
+                    <div className="item-detail-block">
+                        <h2>説明</h2>
+                        <p>{item.description}</p>
+                    </div>
+
+                    <p className="item-detail-meta">
+                        カテゴリ: {item.c0_name} / {item.c1_name}
+                    </p>
+
+                    {item.tags && item.tags.length > 0 && (
+                        <div className="item-tags item-detail-tags">
+                            {item.tags.map((tag, index) => (
+                                <Link
+                                className="item-tag"
+                                key={`${tag}-${index}`}
+                                to={`/browse?keyword=${encodeURIComponent(`#${tag}`)}`}
+                                >
+                                    #{tag}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="item-detail-actions">
+                        <Link className="item-action-button chat" to={`/item/${id}/chat`}>
+                            <img className="item-action-icon" src={chatIcon} alt="" />
+                            チャットを見る
+                        </Link>
+
+                        <button
+                        className={`item-action-button like ${liked ? "liked" : ""}`}
+                        type="button"
+                        onClick={handleLike}
+                        >
+                            {!liked && (
+                                <img className="item-action-icon" src={likeIcon} alt="" />
+                            )}
+                            {liked ? "いいね済み" : "いいね"}
+                        </button>
+
+                        {item.buyer_id ? (
+                            <p className="item-sold-message">この商品は購入済みです</p>
+                        ) : isSeller ? (
+                            <Link className="item-action-button primary" to={`/item/${id}/edit`}>
+                                商品情報を編集
+                            </Link>
+                        ) : (
+                            <Link className="item-action-button primary" to={`/item/${id}/buy`}>
+                                購入する
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            </section>
 
             <h2>関連商品</h2>
 
             {recommendedItems.length > 0 ? (
             <ul className="item-grid">
-            {recommendedItems.map((item) => (
+                {recommendedItems.map((item) => (
                 <li key={item.id} className="item-card">
-                <Link to={`/item/${item.id}`} className="item-card-link">
+                    <Link to={`/item/${item.id}`} className="item-card-link">
                     <div className="item-image-wrap">
-                    <img className="item-image" src={item.image_url} alt={item.name} />
+                        <img className="item-image" src={item.image_url} alt={item.name} />
                     </div>
 
                     <div className="item-title">{item.name}</div>
                     <div className="item-price">{item.price}円</div>
+                    <div className="item-meta">{item.seller}</div>
                     <div className="item-meta">{item.c0_name} / {item.c1_name}</div>
-                </Link>
+
+                    {item.tags && item.tags.length > 0 && (
+                        <div className="item-tags">
+                        {item.tags.slice(0, 4).map((tag, index) => (
+                            <span className="item-tag" key={`${tag}-${index}`}>
+                            #{tag}
+                            </span>
+                        ))}
+                        {item.tags.length > 4 && (
+                            <span className="item-tag">...</span>
+                        )}
+                        </div>
+                    )}
+
+                    <div className="item-meta">{item.posted_at}</div>
+                    </Link>
                 </li>
-            ))}
+                ))}
             </ul>
-                ) : (
-                <p>関連商品はまだありません</p>
+            ) : (
+            <p>関連商品はまだありません</p>
             )}
         </div>
     );

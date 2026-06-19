@@ -1,0 +1,159 @@
+.user-profile {
+  width: min(920px, calc(100vw - 48px));
+  margin: 32px auto 28px;
+  padding: 28px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.user-profile-icon-wrap {
+  flex-shrink: 0;
+}
+
+.user-profile-icon {
+  width: 132px;
+  height: 132px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: #eeeeee;
+  border: 1px solid #dddddd;
+}
+
+.user-profile-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.user-profile-name {
+  margin: 0;
+  margin-right: 8px;
+  font-size: 28px;
+  color: #333333;
+  line-height: 1.25;
+}
+
+.user-follow-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 18px;
+}
+
+.user-follow-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #555555;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.user-follow-link span {
+  color: #333333;
+  font-size: 18px;
+}
+
+.user-follow-link:hover {
+  color: #222222;
+}
+
+.user-profile-bio {
+  margin: 16px 0 0;
+  color: #555555;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.profile-edit-link,
+.profile-follow-button {
+  min-height: 36px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cccccc;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #555555;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.profile-edit-link:hover,
+.profile-follow-button:hover {
+  background: #eeeeee;
+  color: #222222;
+}
+
+.profile-follow-button {
+  border-color: #333333;
+  background: #333333;
+  color: #ffffff;
+}
+
+.profile-follow-button:hover {
+  background: #555555;
+  color: #ffffff;
+}
+
+.user-items-section {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 24px auto 40px;
+}
+
+.user-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border-bottom: 1px solid #dddddd;
+  background: #ffffff;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+.user-tab-button {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: #ffffff;
+  color: #777777;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-tab-button:hover {
+  background: #f5f5f5;
+  color: #333333;
+}
+
+.user-tab-button.active {
+  color: #333333;
+  border-bottom-color: #333333;
+}
+
+.user-tab-empty {
+  margin: 32px 0;
+  color: #777777;
+  font-size: 14px;
+}

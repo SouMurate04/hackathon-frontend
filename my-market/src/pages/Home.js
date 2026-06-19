@@ -41,8 +41,8 @@ export default function Home() {
 
 
   useEffect(() => {
+    document.title = "市場 | WhatsOnSale"
     const load_items = async () => {
-
       const params = new URLSearchParams();
 
       if (keyword) params.set("keyword", keyword);
@@ -110,6 +110,11 @@ export default function Home() {
 
   const handleFilterSearch = () => {
     if (!c0Id && !minPrice && !maxPrice) {
+      alert("項目の入力が不十分です")
+      return;
+    }
+    if(minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) {
+      alert("最大価格は最小価格より大きくしてください")
       return;
     }
 
@@ -169,7 +174,7 @@ export default function Home() {
         className="ai-recommend-fab"
         onClick={() => setIsAIRecommendOpen(true)}
       >
-        AIに相談
+        案内人に聞く
       </button>
 
       {isAIRecommendOpen && (
@@ -182,7 +187,7 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="ai-recommend-header">
-              <h2>AIにおすすめを聞く</h2>
+              <h2>こんにちは！この市場のAI案内人です。</h2>
               <button
                 type="button"
                 className="ai-recommend-close"
@@ -258,8 +263,9 @@ export default function Home() {
 
       {isTopPage && (
         <section className="home-top-section">
-          {!keyword && popularTags.length > 0 && (
-            <div className="popular-tags-panel">
+          <div className="popular-tags-panel">
+          {!keyword && popularTags.length > 0 && (<>
+            
               <h2 className="home-section-title">How's it going?</h2>
 
               <div className="popular-tags-list item-tags" >
@@ -273,73 +279,94 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
-            </div>
-          )}
-
           <div className="home-action-row">
             <Link to="/subscription" className="subscription-link">
               フォロー中のユーザーの出品
             </Link>
           </div>
+          </>)}
+          </div>
+
+          
         </section>
       )}
+
+      <nav className="filter-panel">
+        <div className="filter-header">
+          <h2>絞り込み</h2>
+        </div>
+
+        <div className="filter-controls">
+          <label className="filter-field">
+            <span>大カテゴリ</span>
+            <select
+              value={c0Id}
+              onChange={(e) => {
+                setC0Id(e.target.value);
+                setC1Id("");
+              }}
+            >
+              <option value="">指定なし</option>
+              {categories.map((c0) => (
+                <option key={c0.id} value={c0.id}>
+                  {c0.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="filter-field">
+            <span>小カテゴリ</span>
+            <select
+              value={c1Id}
+              onChange={(e) => setC1Id(e.target.value)}
+              disabled={!c0Id}
+            >
+              <option value="">指定なし</option>
+              {categories
+                .find((c0) => String(c0.id) === String(c0Id))
+                ?.children.map((c1) => (
+                  <option key={c1.id} value={c1.id}>
+                    {c1.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+
+          <label className="filter-field filter-price-field">
+            <span>最低価格</span>
+            <input
+              type="number"
+              placeholder="0"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+          </label>
+
+          <label className="filter-field filter-price-field">
+            <span>最高価格</span>
+            <input
+              type="number"
+              placeholder="10000"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
+          </label>
+
+          <button
+            type="button"
+            onClick={handleFilterSearch}
+            className="filter-submit"
+          >
+            この条件で検索
+          </button>
+        </div>
+      </nav>
 
       <section className="browse-title-section">
         <h1>{hasFilter ? "検索結果" : "商品一覧"}</h1>
         {keyword && <p>「{keyword}」での検索結果</p>}
       </section>
-
-      <nav>
-        <h2>絞り込み</h2>
-
-        <select
-          value={c0Id}
-          onChange={(e) => {
-            setC0Id(e.target.value);
-            setC1Id("");
-          }}
-        >
-          <option value="">大カテゴリを選択</option>
-          {categories.map((c0) => (
-            <option key={c0.id} value={c0.id}>
-              {c0.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={c1Id}
-          onChange={(e) => setC1Id(e.target.value)}
-          disabled={!c0Id}
-        >
-          <option value="">小カテゴリを選択</option>
-          {categories
-            .find((c0) => String(c0.id) === String(c0Id))
-            ?.children.map((c1) => (
-              <option key={c1.id} value={c1.id}>
-                {c1.name}
-              </option>
-            ))}
-        </select>
-
-        <input
-          type="number"
-          placeholder="最低価格"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
-
-        <input
-          type="number"
-          placeholder="最高価格"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-
-        <button type="button" onClick={handleFilterSearch}>
-          この条件で検索
-        </button>
-      </nav>
 
       <p>
       {items.length === 0 ? (

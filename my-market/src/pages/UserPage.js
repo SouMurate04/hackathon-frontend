@@ -7,6 +7,7 @@ export default function UserPage(){
 
     const { id } = useParams();
     const [user, setUser] = useState(null);
+    const [activeTab, setActiveTab] = useState("listed");
     const [items, setItems] = useState([]);
     const [likedItems, setLikedItems] = useState([]);
     const [boughtItems, setBoughtItems] = useState([]);
@@ -36,7 +37,7 @@ export default function UserPage(){
 
                         {isSold && (
                             <div className="sold-badge">
-                                SOLD OUT
+                                SOLD
                             </div>
                         )}
                     </div>
@@ -47,13 +48,16 @@ export default function UserPage(){
                     <div className="item-meta">{item.c0_name} / {item.c1_name}</div>
 
                     {item.tags && item.tags.length > 0 && (
-                        <div className="item-tags">
-                            {item.tags.map((tag, index) => (
-                                <span className="item-tag" key={`${tag}-${index}`}>
-                                    #{tag}
-                                </span>
-                            ))}
-                        </div>
+                    <div className="item-tags">
+                        {item.tags.slice(0, 4).map((tag, index) => (
+                        <span className="item-tag" key={`${tag}-${index}`}>
+                            #{tag}
+                        </span>
+                        ))}
+                        {item.tags.length > 4 && (
+                        <span className="item-tag">...</span>
+                        )}
+                    </div>
                     )}
 
                     <div className="item-meta">{item.posted_at}</div>
@@ -204,61 +208,118 @@ export default function UserPage(){
         }));
     };
 
+    const tabs = [
+        {
+            key: "listed",
+            label: "出品商品",
+            items: items,
+            emptyText: "出品した商品はありません",
+        },
+        ...(isMyPage
+            ? [
+                {
+                    key: "bought",
+                    label: "購入商品",
+                    items: boughtItems,
+                    emptyText: "購入した商品はありません",
+                },
+            ]
+            : []),
+        {
+            key: "liked",
+            label: "いいね",
+            items: likedItems,
+            emptyText: "いいねした商品はありません",
+        },
+    ];
+
+    const activeTabData = tabs.find((tab) => tab.key === activeTab) || tabs[0];
+    
+    useEffect(() => {
+        setActiveTab("listed");
+    }, [id]);
+
     if(!user){
         return <p>Loading...</p>;
     }
 
+    document.title = `${user.name}さん | WhatsOnSale`;
 
     return(
         <div>
-            <h1>{user.name}</h1>
-            <img src={user.icon_url} alt={user.name} />
-            <div>{user.bio}</div>
-            <div>{isMyPage && <Link to="/edit-profile">プロフィールを編集</Link>}</div>
+            <section className="user-profile">
+                <div className="user-profile-icon-wrap">
+                    <img
+                        src={user.icon_url}
+                        alt={user.name}
+                        className="user-profile-icon"
+                    />
+                </div>
 
-            <div>
-                <Link to={`/user/${id}/followings`}>
-                    フォロー {followSummary.followings_count}
-                </Link>
-                {" / "}
-                <Link to={`/user/${id}/followers`}>
-                    フォロワー {followSummary.followers_count}
-                </Link>
-            </div>
+                <div className="user-profile-body">
+                    <div className="user-profile-header">
+                        <h1 className="user-profile-name">{user.name}</h1>
 
-            {fireAuth.currentUser && user.firebase_uid !== fireAuth.currentUser.uid && (
-                <button type="button" onClick={handleFollow}>
-                    {isFollowing ? "フォロー解除" : "フォローする"}
-                </button>
-            )}
+                        {isMyPage && (
+                            <Link to="/edit-profile" className="profile-edit-link">
+                                登録情報を編集
+                            </Link>
+                        )}
+
+                        {fireAuth.currentUser && user.firebase_uid !== fireAuth.currentUser.uid && (
+                            <button
+                                type="button"
+                                onClick={handleFollow}
+                                className="profile-follow-button"
+                            >
+                                {isFollowing ? "フォロー解除" : "フォローする"}
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="user-follow-row">
+                        <Link to={`/user/${id}/followings`} className="user-follow-link">
+                            <span>{followSummary.followings_count}</span>
+                            フォロー
+                        </Link>
+
+                        <Link to={`/user/${id}/followers`} className="user-follow-link">
+                            <span>{followSummary.followers_count}</span>
+                            フォロワー
+                        </Link>
+                    </div>
+
+                    <p className="user-profile-bio">
+                        {user.bio || "自己紹介はまだありません"}
+                    </p>
+                </div>
+            </section>
 
             <h1>商品一覧</h1>
-            {items ? (
-            <ul className="item-grid">{items.map(renderItem)}</ul>
-                ):(
-                    <p>出品した商品はありません</p>
-                )
-            }
+            <section className="user-items-section">
+                <div className="user-tabs">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.key}
+                            type="button"
+                            className={`user-tab-button ${activeTab === tab.key ? "active" : ""}`}
+                            onClick={() => setActiveTab(tab.key)}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
 
-            {isMyPage && (
-            <>
-            <h1>購入した商品</h1>
-
-            {boughtItems.length > 0 ? (
-                <ul className="item-grid">{boughtItems.map(renderItem)}</ul>
-            ) : (
-                <p>購入した商品はありません</p>
-            )}
-            </>
-            )}
-
-            <h1>いいねした商品</h1>
-            {likedItems ? (
-            <ul className="item-grid">{likedItems.map(renderItem)}</ul>
-                ):(
-                    <p>いいねした商品はありません</p>
-                )
-            }
+                {activeTabData.items.length > 0 ? (
+                    <ul className="item-grid">
+                        {activeTabData.items.map(renderItem)}
+                    </ul>
+                ) : (
+                    <p className="user-tab-empty">
+                        {activeTabData.emptyText}
+                    </p>
+                )}
+            </section>
         </div>
     );
 }

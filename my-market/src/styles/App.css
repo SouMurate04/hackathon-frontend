@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  text-align: center;
+  background-color: #EFEFEF;
+  min-height: 100vh;
+  font-size: calc(10px + 2vmin);
+  color: #333333;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+}
+
+.app-footer {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-top: 1px solid #dddddd;
+  color: #777777;
+  font-size: 13px;
+  font-weight: 700;
+}

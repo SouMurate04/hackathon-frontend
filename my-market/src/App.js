@@ -1,6 +1,8 @@
+import './styles/App.css';
 import './styles/Header.css';
 import './styles/Home.css'
 import './styles/Item.css';
+import './styles/UserPage.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -26,10 +28,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <BrowserRouter>
-    <Loader>
+    <Loader><div className="app-layout">
       <Header />
 
-      <Routes>
+      <main className="app-main"><Routes>
         <Route path="/" element={<Home />} />
         <Route path="/browse" element={<Home />} />
         <Route path="/item/:id" element={<ItemPage />} />
@@ -53,8 +55,12 @@ function App() {
 
         <Route path="/notification" element={<ProtectedRoute><NotificationAll /></ProtectedRoute>} />
         <Route path="/notification/:notification_id" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
-      </Routes>
-    </Loader>
+      </Routes></main>
+
+      <footer className="app-footer">
+        @WhatsOnSale, Inc.
+      </footer>
+    </div></Loader>
     </BrowserRouter>
   );
 }
