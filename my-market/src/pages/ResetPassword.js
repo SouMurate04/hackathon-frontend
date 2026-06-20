@@ -18,6 +18,8 @@ export default function ResetPassword() {
     }
   };
 
+  document.title = "パスワードリセット | WhatsOnSale";
+
   return (
     <div className="auth-page">
       <div className="auth-card">

@@ -208,3 +208,16 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+.notification-back-link {
+  display: inline-flex;
+  margin-bottom: 16px;
+  color: #555555;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.notification-back-link:hover {
+  color: #111111;
+}

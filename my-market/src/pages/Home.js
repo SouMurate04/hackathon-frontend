@@ -41,7 +41,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    document.title = "市場 | WhatsOnSale"
+    document.title = isTopPage ? "市場 | WhatsOnSale" : "路地 | WhatsOnSale";
     const load_items = async () => {
       const params = new URLSearchParams();
 

@@ -147,132 +147,150 @@ export default function Buy(){
         return <p>Loading...</p>;
     }
 
+    document.title = `購入確認 | ${item.name} | WhatsOnSale`;
+
     return (
-        <div>
-            <h1>購入確認</h1>
+    <div className="buy-page">
+        <h1 className="buy-title">購入確認</h1>
 
-            <h2>{item.name}</h2>
-            <img src={item.image_url} alt={item.name} />
-            <p>{item.price}円</p>
-            <p>出品者: {item.seller}</p>
-
-            {item.buyer_id ? (
-                <p>この商品は購入済みです</p>
-            ) : (
-                <form onSubmit={handleBuy}>
-                    <h2>配送先</h2>
-
-                    <div>
-                        <label>
-                            <input
-                                type="radio"
-                                name="deliveryPlaceType"
-                                value="home_handoff"
-                                checked={deliveryPlaceType === "home_handoff"}
-                                onChange={(e) => setDeliveryPlaceType(e.target.value)}
-                            />
-                            自宅(手渡し)
-                        </label>
-
-                        <label>
-                            <input
-                                type="radio"
-                                name="deliveryPlaceType"
-                                value="home_delivery_box"
-                                checked={deliveryPlaceType === "home_delivery_box"}
-                                onChange={(e) => setDeliveryPlaceType(e.target.value)}
-                            />
-                            自宅(置き配・宅配ボックス)
-                        </label>
-
-                        <label>
-                            <input
-                                type="radio"
-                                name="deliveryPlaceType"
-                                value="pickup_point"
-                                checked={deliveryPlaceType === "pickup_point"}
-                                onChange={(e) => setDeliveryPlaceType(e.target.value)}
-                            />
-                            コンビニ・郵便局・営業所などで受取
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            郵便番号
-                            <input
-                                type="text"
-                                value={postalCode}
-                                onChange={(e) => setPostalCode(e.target.value)}
-                                placeholder="1234567"
-                            />
-                        </label>
-
-                        <button type="button" onClick={fillAddressByPostalCode}>
-                            郵便番号から住所入力
-                        </button>
-                    </div>
-
-                    <div>
-                        <label>
-                            都道府県・市区町村
-                            <input
-                                type="text"
-                                value={addressCity}
-                                onChange={(e) => setAddressCity(e.target.value)}
-                                placeholder="東京都渋谷区"
-                            />
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            町域・番地
-                            <input
-                                type="text"
-                                value={addressStreet}
-                                onChange={(e) => setAddressStreet(e.target.value)}
-                                placeholder="〇〇町1-2-3"
-                            />
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            建物名・部屋番号 / 店舗名・営業所名
-                            <input
-                                type="text"
-                                value={addressBuilding}
-                                onChange={(e) => setAddressBuilding(e.target.value)}
-                                placeholder="〇〇マンション101 / 〇〇郵便局"
-                            />
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={saveAsDefault}
-                                onChange={(e) => setSaveAsDefault(e.target.checked)}
-                            />
-                            この配送先をデフォルトにする
-                        </label>
-                    </div>
-
-                    <h2>出品者へのメッセージ</h2>
-
-                    <textarea
-                        value={messageToSeller}
-                        onChange={(e) => setMessageToSeller(e.target.value)}
-                        placeholder="例: 購入させていただきます。よろしくお願いします。"
-                    />
-
-                    <button type="submit" disabled={!isAddressValid}>
-                        購入確定
-                    </button>
-                </form>
-            )}
+        <section className="buy-item-section">
+        <div className="buy-item-image-wrap">
+            <img
+            className="buy-item-image"
+            src={item.image_urls?.[0] || item.image_url}
+            alt={item.name}
+            />
         </div>
+
+        <div className="buy-item-info">
+            <h2>{item.name}</h2>
+            <p className="buy-item-price">{item.price}円</p>
+            <p className="buy-item-meta">出品者: {item.seller}</p>
+        </div>
+        </section>
+
+        {item.buyer_id ? (
+        <p className="buy-sold-message">この商品は購入済みです</p>
+        ) : (
+        <form className="buy-form" onSubmit={handleBuy}>
+            <section className="buy-section">
+            <h2>配送先</h2>
+
+            <div className="delivery-radio-list">
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="home_handoff"
+                    checked={deliveryPlaceType === "home_handoff"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                自宅(手渡し)
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="home_delivery_box"
+                    checked={deliveryPlaceType === "home_delivery_box"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                自宅(置き配・宅配ボックス)
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="pickup_point"
+                    checked={deliveryPlaceType === "pickup_point"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                コンビニ・郵便局・営業所などで受取
+                </label>
+            </div>
+
+            <div className="postal-row">
+                <label className="edit-profile-field">
+                <span>郵便番号</span>
+                <input
+                    type="text"
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                    placeholder="1234567"
+                />
+                </label>
+
+                <button
+                className="profile-sub-button"
+                type="button"
+                onClick={fillAddressByPostalCode}
+                >
+                住所自動入力
+                </button>
+            </div>
+
+            <label className="edit-profile-field">
+                <span>都道府県・市区町村</span>
+                <input
+                type="text"
+                value={addressCity}
+                onChange={(e) => setAddressCity(e.target.value)}
+                placeholder="東京都渋谷区"
+                />
+            </label>
+
+            <label className="edit-profile-field">
+                <span>町域・番地</span>
+                <input
+                type="text"
+                value={addressStreet}
+                onChange={(e) => setAddressStreet(e.target.value)}
+                placeholder="〇〇町1-2-3"
+                />
+            </label>
+
+            <label className="edit-profile-field">
+                <span>建物名・部屋番号 / 店舗名・営業所名</span>
+                <input
+                type="text"
+                value={addressBuilding}
+                onChange={(e) => setAddressBuilding(e.target.value)}
+                placeholder="〇〇マンション101 / 〇〇郵便局"
+                />
+            </label>
+
+            <label className="buy-checkbox">
+                <input
+                type="checkbox"
+                checked={saveAsDefault}
+                onChange={(e) => setSaveAsDefault(e.target.checked)}
+                />
+                この配送先をデフォルトにする
+            </label>
+            </section>
+
+            <section className="buy-section">
+            <h2>出品者へのメッセージ</h2>
+
+            <textarea
+                className="buy-message-textarea"
+                value={messageToSeller}
+                onChange={(e) => setMessageToSeller(e.target.value)}
+                placeholder="例: 購入させていただきます。よろしくお願いします。"
+            />
+            </section>
+
+            <button
+            className="buy-submit-button"
+            type="submit"
+            disabled={!isAddressValid}
+            >
+            購入確定
+            </button>
+        </form>
+        )}
+    </div>
     );
 }

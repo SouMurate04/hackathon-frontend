@@ -8,6 +8,7 @@ import './styles/Chat.css';
 import './styles/SellEdit.css'
 import './styles/EditProfile.css';
 import './styles/Notification.css';
+import './styles/Buy.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";

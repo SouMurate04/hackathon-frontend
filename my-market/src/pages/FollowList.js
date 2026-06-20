@@ -22,6 +22,8 @@ export default function FollowList({ type }) {
         loadUsers();
     }, [API_BASE_URL, id, isFollowers]);
 
+    document.title = isFollowers ? "フォロワー | WhatsOnSale" : "フォロー中 | WhatsOnSale";
+
     return (
     <div className="follow-list-page">
         <h1 className="follow-list-title">

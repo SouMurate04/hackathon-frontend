@@ -47,6 +47,8 @@ export default function Signup() {
     }
   };
 
+  document.title = "新規作成 | WhatsOnSale";
+
   return (
     <div className="auth-page">
       <div className="auth-card">

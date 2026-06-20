@@ -32,6 +32,8 @@ export default function NotificationAll() {
         });
     }, [API_BASE_URL]);
 
+    document.title = "通知一覧 | WhatsOnSale";
+
     return (
     <div className="notification-page">
         <h1 className="notification-title">通知</h1>

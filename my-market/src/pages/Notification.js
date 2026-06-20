@@ -108,6 +108,10 @@ export default function Notification() {
 
     return (
     <div className="notification-detail-page">
+        <Link className="notification-back-link" to="/notification">
+        ← 通知一覧に戻る
+        </Link>
+        
         <article className="notification-detail-card">
         <header className="notification-detail-header">
             <h1>{notification.title}</h1>

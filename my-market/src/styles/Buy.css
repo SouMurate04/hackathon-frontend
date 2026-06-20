@@ -1,0 +1,151 @@
+.buy-page {
+  width: min(760px, calc(100vw - 32px));
+  margin: 32px auto 56px;
+  font-size: 14px;
+  color: #333333;
+  text-align: left;
+}
+
+.buy-title {
+  margin: 0 0 22px;
+  font-size: 26px;
+  text-align: center;
+}
+
+.buy-item-section,
+.buy-section {
+  padding: 18px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.buy-item-section {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.buy-item-image-wrap {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #dddddd;
+  background: #f3f3f3;
+}
+
+.buy-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.buy-item-info h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.buy-item-price {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.buy-item-meta {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.buy-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.buy-section h2 {
+  margin: 0 0 16px;
+  font-size: 16px;
+}
+
+.buy-checkbox {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555555;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.buy-checkbox input {
+  accent-color: #e11d48;
+}
+
+.buy-message-textarea {
+  width: 100%;
+  min-height: 120px;
+  max-height: 120px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.buy-message-textarea:focus {
+  outline: none;
+  border-color: #e11d48;
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+}
+
+.buy-submit-button {
+  height: 44px;
+  border: none;
+  border-radius: 6px;
+  background: #333333;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.buy-submit-button:hover {
+  opacity: 0.84;
+}
+
+.buy-submit-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.buy-sold-message {
+  padding: 18px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #777777;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .buy-item-section {
+    grid-template-columns: 1fr;
+  }
+
+  .buy-item-image-wrap {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}

@@ -21,6 +21,8 @@ export default function Login() {
     }
   };
 
+  document.title = "ログイン | WhatsOnSale";
+
   return (
     <div className="auth-page">
       <div className="auth-card">
