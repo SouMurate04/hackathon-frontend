@@ -213,3 +213,20 @@
     width: 100%;
   }
 }
+
+.edit-profile-delete-button {
+  width: 100%;
+  height: 42px;
+  margin-top: 14px;
+  border: 1px solid #be123c;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #be123c;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.edit-profile-delete-button:hover {
+  background: #fff1f2;
+}

@@ -155,11 +155,22 @@ export default function Notification() {
             </section>
         )}
 
-        {notification.item_id && (
-            <Link
-            className="notification-item-button"
-            to={`/item/${notification.item_id}`}
-            >
+        {notification.notification_type === "followed" && notification.sender_id && (
+        <Link className="notification-item-button" to={`/user/${notification.sender_id}`}>
+            プロフィールを見る
+        </Link>
+        )}
+
+        {notification.notification_type === "chat_message" && notification.item_id && (
+        <Link className="notification-item-button" to={`/item/${notification.item_id}/chat`}>
+            チャットを見る
+        </Link>
+        )}
+
+        {notification.notification_type !== "followed" &&
+        notification.notification_type !== "chat_message" &&
+        notification.item_id && (
+            <Link className="notification-item-button" to={`/item/${notification.item_id}`}>
             商品ページを見る
             </Link>
         )}

@@ -2,7 +2,7 @@ import { fireAuth } from "../firebase";
 import { useState, useEffect } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
-import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, } from "firebase/auth";
+import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from "firebase/auth";
 
 export default function EditProfile() {
 
@@ -185,6 +185,52 @@ export default function EditProfile() {
             console.error(err);
             alert(err.message);
         }
+    };
+
+    const handleDeleteAccount = async () => {
+    const ok = window.confirm(
+        "アカウントを削除しますか？この操作は取り消せません。"
+    );
+
+    if (!ok) return;
+
+    try {
+        const currentUser = fireAuth.currentUser;
+
+        if (!currentUser) {
+        throw new Error("ログイン情報が見つかりません");
+        }
+
+        const token = await currentUser.getIdToken();
+
+        const response = await fetch(`${API_BASE_URL}/user`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        });
+
+        if (!response.ok) {
+        const text = await response.text();
+        console.error(text);
+        throw new Error("DB側のアカウント削除に失敗しました");
+        }
+
+        await deleteUser(currentUser);
+
+        alert("アカウントを削除しました");
+        navigate("/signup");
+    } catch (err) {
+        console.error(err);
+
+        if (err.code === "auth/requires-recent-login") {
+        alert("安全のため、再ログインしてからもう一度削除してください。");
+        navigate("/login");
+        return;
+        }
+
+        alert(err.message);
+    }
     };
 
     document.title = `登録情報編集 | ${name} | WhatsOnSale`
@@ -426,6 +472,14 @@ export default function EditProfile() {
             変更を確定
             </button>
         </form>
+
+        <button
+        className="edit-profile-delete-button"
+        type="button"
+        onClick={handleDeleteAccount}
+        >
+        アカウントを削除
+        </button>
 
     </div>
   );
