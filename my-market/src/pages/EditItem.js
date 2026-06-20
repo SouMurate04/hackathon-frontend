@@ -14,7 +14,7 @@ export default function EditItem() {
     const [description, setDescription] = useState("");
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
-    const [aiState, setAiState] = useState([]);
+    //const [aiState, setAiState] = useState([]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
 
@@ -161,7 +161,7 @@ export default function EditItem() {
         setTags((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const handleGenerateIntroduction = async () => {
+    /*const handleGenerateIntroduction = async () => {
         setAiState("紹介文を作っています...");
 
         try {
@@ -197,7 +197,7 @@ export default function EditItem() {
         }
 
         setAiState("");
-    };
+    };*/
 
     const handleAddImages = (files) => {
         const newImageItems = Array.from(files).map((file) => ({
@@ -300,18 +300,6 @@ export default function EditItem() {
                     />
                     </label>
                 </div>
-
-                <div className="image-section-footer">
-                    <button
-                    className="item-generate-button"
-                    type="button"
-                    onClick={handleGenerateIntroduction}
-                    >
-                    画像から紹介文を生成
-                    </button>
-                </div>
-
-                <p className="item-form-help">{aiState}</p>
                 </section>
 
                 <label className="item-form-field">

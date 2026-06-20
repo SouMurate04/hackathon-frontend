@@ -13,7 +13,7 @@ export default function Sell(){
     const [images, setImages] = useState([]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
-    const [aiState, setAiState] = useState([]);
+    const [aiState, setAiState] = useState("");
     const navigate = useNavigate();
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";

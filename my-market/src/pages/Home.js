@@ -73,7 +73,7 @@ export default function Home() {
     };
 
     load_items();
-  }, [REACT_APP_API_BASE_URL, keyword, queryC0Id, queryC1Id, queryMinPrice, queryMaxPrice,]);
+  }, [REACT_APP_API_BASE_URL, isTopPage, keyword, queryC0Id, queryC1Id, queryMinPrice, queryMaxPrice,]);
 
   useEffect(() => {
     const loadCategories = async () => {
