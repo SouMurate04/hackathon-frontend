@@ -131,6 +131,7 @@ export default function Home() {
 
   const handleAIRecommendation = async (e) => {
     e.preventDefault();
+    setAiAnswer("市場を調査中...");
 
     if (!aiQuestion.trim()) return;
 

@@ -107,34 +107,63 @@ export default function Notification() {
     if (!notification) return <p>Loading...</p>;
 
     return (
-        <div>
+    <div className="notification-detail-page">
+        <article className="notification-detail-card">
+        <header className="notification-detail-header">
             <h1>{notification.title}</h1>
-            <p>{notification.message}</p>
-            <p>{new Date(notification.timestamp).toLocaleString()}</p>
 
-            {notification.requires_action && !notification.responded_at && (
-                <div>
-                    <textarea
-                        value={replyMessage}
-                        onChange={(e) => setReplyMessage(e.target.value)}
-                        placeholder="購入者へのメッセージ"
-                    />
-
-                    <button type="button" onClick={handleReply}>
-                        送信
-                    </button>
-
-                    <button type="button" onClick={handleDismiss}>
-                        メッセージは送信しない
-                    </button>
-                </div>
+            {!notification.is_read && (
+            <span className="notification-unread-badge">未読</span>
             )}
+        </header>
 
-            {notification.item_id && (
-                <Link to={`/item/${notification.item_id}`}>
-                    商品ページを見る
-                </Link>
-            )}
-        </div>
+        <p className="notification-detail-message">
+            {notification.message}
+        </p>
+
+        {notification.requires_action && !notification.responded_at && (
+            <section className="notification-reply-box">
+            <h2>購入者へメッセージを送る</h2>
+
+            <textarea
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+                placeholder="例: ご購入ありがとうございます。発送準備ができ次第ご連絡します。"
+            />
+
+            <div className="notification-reply-actions">
+                <button
+                className="notification-reply-button primary"
+                type="button"
+                onClick={handleReply}
+                >
+                送信
+                </button>
+
+                <button
+                className="notification-reply-button secondary"
+                type="button"
+                onClick={handleDismiss}
+                >
+                メッセージは送信しない
+                </button>
+            </div>
+            </section>
+        )}
+
+        {notification.item_id && (
+            <Link
+            className="notification-item-button"
+            to={`/item/${notification.item_id}`}
+            >
+            商品ページを見る
+            </Link>
+        )}
+
+        <time className="notification-detail-time">
+            {new Date(notification.timestamp).toLocaleString()}
+        </time>
+        </article>
+    </div>
     );
 }

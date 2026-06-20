@@ -29,7 +29,6 @@ export default function EditProfile() {
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
 
-    const [error, setError] = useState("");
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -82,7 +81,7 @@ export default function EditProfile() {
 
     const handleEditProfile = async (e) => {
         e.preventDefault();
-        setError("");
+        
 
         try {
             if(name == null || email == null){
@@ -152,7 +151,7 @@ export default function EditProfile() {
             navigate(`/user/${user_ret.id}`);
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
@@ -163,7 +162,7 @@ export default function EditProfile() {
 
     const fillAddressByPostalCode = async () => {
         try {
-            setError("");
+            
 
             const code = postalCode.replace("-", "");
 
@@ -184,173 +183,250 @@ export default function EditProfile() {
             setAddressStreet(result.address3);
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
+    document.title = `登録情報編集 | ${name} | WhatsOnSale`
+
   return (
-    <div>
-      <div>
-        <h1>Edit Profile</h1>
-        <form onSubmit={handleEditProfile}>
-            <img src={iconUrl} alt={name} />
-            <button type="button" onClick={deleteIcon}>アイコンを削除</button>
-            <input type="file" accept="image/*"
-            onChange={(e) => {
-              setIcon(e.target.files[0])
-              setIconUrl(URL.createObjectURL(e.target.files[0]));
-            }} 
-            />
+    <div className="edit-profile-page">
+        <h1 className="edit-profile-title">Edit User Information</h1>
+        <form className="edit-profile-form" onSubmit={handleEditProfile}>
+            <section className="edit-profile-section">
+            <h2>アイコン</h2>
 
-            <input type="text" placeholder="ニックネーム" value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <div className="profile-icon-editor">
+                <img className="profile-icon-preview" src={iconUrl} alt={name} />
 
-            <input type="text" placeholder="プロフィール" value={bio}
-              onChange={(e) => setBio(e.target.value)}
-            />
-
-            <input type="email" placeholder="メールアドレス" value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <h2>配送先情報</h2>
-
-            <div>
-                <label>
+                <div className="profile-icon-actions">
+                <label className="profile-icon-button">
+                    アイコンを選択
                     <input
-                        type="radio"
-                        name="deliveryPlaceType"
-                        value="home_handoff"
-                        checked={deliveryPlaceType === "home_handoff"}
-                        onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        setIcon(file);
+                        setIconUrl(URL.createObjectURL(file));
+                    }}
                     />
-                    自宅(手渡し)
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="deliveryPlaceType"
-                        value="home_delivery_box"
-                        checked={deliveryPlaceType === "home_delivery_box"}
-                        onChange={(e) => setDeliveryPlaceType(e.target.value)}
-                    />
-                    自宅(置き配・宅配ボックス)
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="deliveryPlaceType"
-                        value="pickup_point"
-                        checked={deliveryPlaceType === "pickup_point"}
-                        onChange={(e) => setDeliveryPlaceType(e.target.value)}
-                    />
-                    コンビニ・郵便局・営業所などで受取
                 </label>
 
                 <button
+                    className="profile-icon-button danger"
                     type="button"
-                    onClick={() => {
-                        setDeliveryPlaceType("");
-                        setPostalCode("");
-                        setAddressCity("");
-                        setAddressStreet("");
-                        setAddressBuilding("");
-                    }}
+                    onClick={deleteIcon}
                 >
-                    配送先を未設定に戻す
+                    アイコンを削除
+                </button>
+                </div>
+            </div>
+            </section>
+
+            <section className="edit-profile-section">
+            <h2>基本情報</h2>
+
+            <label className="edit-profile-field">
+                <span>ニックネーム</span>
+                <input
+                type="text"
+                placeholder="例: 山田太郎"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                />
+            </label>
+
+            <label className="edit-profile-field">
+                <span>プロフィール</span>
+                <textarea
+                placeholder="自己紹介を入力"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                />
+            </label>
+
+            <label className="edit-profile-field">
+                <span>メールアドレス</span>
+                <input
+                type="email"
+                placeholder="example@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                />
+            </label>
+            </section>
+
+            <section className="edit-profile-section">
+            <h2>配送先情報</h2>
+
+            <div className="delivery-radio-list">
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="home_handoff"
+                    checked={deliveryPlaceType === "home_handoff"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                自宅(手渡し)
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="home_delivery_box"
+                    checked={deliveryPlaceType === "home_delivery_box"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                自宅(置き配・宅配ボックス)
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="deliveryPlaceType"
+                    value="pickup_point"
+                    checked={deliveryPlaceType === "pickup_point"}
+                    onChange={(e) => setDeliveryPlaceType(e.target.value)}
+                />
+                コンビニ・郵便局・営業所などで受取
+                </label>
+            </div>
+
+            <button
+                className="profile-sub-button"
+                type="button"
+                onClick={() => {
+                setDeliveryPlaceType("");
+                setPostalCode("");
+                setAddressCity("");
+                setAddressStreet("");
+                setAddressBuilding("");
+                }}
+            >
+                配送先を未設定に戻す
+            </button>
+
+            <div className="postal-row">
+                <label className="edit-profile-field">
+                <span>郵便番号</span>
+                <input
+                    type="text"
+                    placeholder="1234567"
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                />
+                </label>
+
+                <button
+                className="profile-sub-button"
+                type="button"
+                onClick={fillAddressByPostalCode}
+                >
+                住所自動入力
                 </button>
             </div>
 
-            <div>
-                <label>
-                    郵便番号
-                    <input
-                        type="text"
-                        placeholder="1234567"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
-                    />
-                </label>
+            <label className="edit-profile-field">
+                <span>都道府県・市区町村</span>
+                <input
+                type="text"
+                placeholder="東京都渋谷区"
+                value={addressCity}
+                onChange={(e) => setAddressCity(e.target.value)}
+                />
+            </label>
 
-                <button type="button" onClick={fillAddressByPostalCode}>
-                    郵便番号から住所入力
-                </button>
-            </div>
+            <label className="edit-profile-field">
+                <span>町域・番地</span>
+                <input
+                type="text"
+                placeholder="〇〇町1-2-3"
+                value={addressStreet}
+                onChange={(e) => setAddressStreet(e.target.value)}
+                />
+            </label>
 
-            <div>
-                <label>
-                    都道府県・市区町村
-                    <input
-                        type="text"
-                        placeholder="東京都渋谷区"
-                        value={addressCity}
-                        onChange={(e) => setAddressCity(e.target.value)}
-                    />
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    町域・番地
-                    <input
-                        type="text"
-                        placeholder="〇〇町1-2-3"
-                        value={addressStreet}
-                        onChange={(e) => setAddressStreet(e.target.value)}
-                    />
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    建物名・部屋番号 / 店舗名・営業所名
-                    <input
-                        type="text"
-                        placeholder="〇〇マンション101 / 〇〇郵便局"
-                        value={addressBuilding}
-                        onChange={(e) => setAddressBuilding(e.target.value)}
-                    />
-                </label>
-            </div>
+            <label className="edit-profile-field">
+                <span>建物名・部屋番号 / 店舗名・営業所名</span>
+                <input
+                type="text"
+                placeholder="〇〇マンション101 / 〇〇郵便局"
+                value={addressBuilding}
+                onChange={(e) => setAddressBuilding(e.target.value)}
+                />
+            </label>
 
             {deliveryPlaceType && !isAddressValid && (
-                <p>
-                    {isPickupPoint
-                        ? "受取店舗名・営業所名を入力してください"
-                        : "郵便番号、都道府県・市区町村、町域・番地を入力してください"}
+                <p className="edit-profile-error">
+                {isPickupPoint
+                    ? "最低でも受取店舗名・営業所名を入力する必要があります"
+                    : "最低でも郵便番号、都道府県・市区町村、町域・番地を入力する必要があります"}
                 </p>
             )}
+            </section>
 
-            <input type="checkbox" checked={wantSetPassword}
-              onChange={(e) => setWantSetPassword(e.target.checked)}
-            /> パスワードを再設定する
+            <section className="edit-profile-section">
+            <label className="password-toggle">
+                <input
+                type="checkbox"
+                checked={wantSetPassword}
+                onChange={(e) => setWantSetPassword(e.target.checked)}
+                />
+                パスワードを再設定する
+            </label>
 
-            {wantSetPassword && <p>
-            <input type="password" placeholder="変更前のパスワード" value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
+            {wantSetPassword && (
+                <div className="password-fields">
+                <label className="edit-profile-field">
+                    <span>変更前のパスワード</span>
+                    <input
+                    type="password"
+                    placeholder="現在のパスワード"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    />
+                </label>
 
-            <input type="password" placeholder="パスワード" value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+                <label className="edit-profile-field">
+                    <span>新しいパスワード</span>
+                    <input
+                    type="password"
+                    placeholder="新しいパスワード"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    />
+                </label>
 
-            <input type="password2" placeholder="パスワード(確認のため再入力)" value={password2}
-              onChange={(e) => setPassword2(e.target.value)}
-            />
-            
-            <Link to="/reset-password">パスワードを忘れた場合はこちら</Link>
-            </p>}
+                <label className="edit-profile-field">
+                    <span>新しいパスワード 確認</span>
+                    <input
+                    type="password"
+                    placeholder="もう一度入力"
+                    value={password2}
+                    onChange={(e) => setPassword2(e.target.value)}
+                    />
+                </label>
 
-            <button type="submit" disabled={!isAddressValid}>
-                変更を確定
+                <Link className="profile-reset-link" to="/reset-password">
+                    パスワードを忘れた場合はこちら
+                </Link>
+                </div>
+            )}
+            </section>
+
+            <button
+            className="edit-profile-submit"
+            type="submit"
+            disabled={!isAddressValid}
+            >
+            変更を確定
             </button>
         </form>
 
-        {error && <p>{error}</p>}
-      </div>
     </div>
   );
 }

@@ -64,6 +64,7 @@ export default function Header() {
   };
 
   const handleLogout = async () => {
+    if (!window.confirm("ログアウトしますか?")) return;
     setIsUserMenuOpen(false);
     await signOut(fireAuth);
     navigate("/");

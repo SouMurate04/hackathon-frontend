@@ -6,51 +6,55 @@ import { fireAuth } from "../firebase";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
       await signInWithEmailAndPassword(fireAuth, email, password);
       navigate("/");
     } catch (err) {
-      setError("ログインに失敗しました");
+      alert("ログインに失敗しました");
       console.error(err);
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Login</h1>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form className="auth-form" onSubmit={handleLogin}>
+          <label className="auth-field">
+            <span>メールアドレス</span>
+            <input
+              type="email"
+              placeholder="example@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <label className="auth-field">
+            <span>パスワード</span>
+            <input
+              type="password"
+              placeholder="頑張って思い出してください"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button type="submit">ログイン</button>
-      </form>
+          <button className="auth-submit" type="submit">ログイン</button>
+        </form>
 
-        <p>
-            <div>アカウントがない場合は <Link to="/signup">新規作成</Link></div>
-            <div>パスワードを忘れた方は<Link to="/reset-password">こちら</Link></div>
-        </p>
-
-      {error && <p>{error}</p>}
+        <div className="auth-links">
+          <span>アカウントがない場合は <Link to="/signup">新規作成</Link></span>
+          <span>パスワードを忘れた方は <Link to="/reset-password">こちら</Link></span>
+        </div>
+      </div>
     </div>
   );
 }

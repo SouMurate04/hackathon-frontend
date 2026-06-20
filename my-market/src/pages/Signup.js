@@ -6,14 +6,12 @@ import { fireAuth } from "../firebase";
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
 
@@ -45,31 +43,43 @@ export default function Signup() {
       navigate("/");
     } catch (err) {
       console.error(err.message);
-      setError(err.message);
+      alert(err.message);
     }
   };
 
   return (
-    <div>
-      <h1>新規作成</h1>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">SignUp</h1>
 
-      <form onSubmit={handleSignup}>
-        <input type="email" placeholder="メールアドレス" value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form className="auth-form" onSubmit={handleSignup}>
+          <label className="auth-field">
+            <span>メールアドレス</span>
+            <input
+              type="email"
+              placeholder="example@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <input type="password" placeholder="パスワード" value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <label className="auth-field">
+            <span>パスワード</span>
+            <input
+              type="password"
+              placeholder="強度の高いパスワードを推奨します"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button type="submit">アカウント作成</button>
-      </form>
+          <button className="auth-submit" type="submit">アカウントを作成</button>
+        </form>
 
-      {error && <p>{error}</p>}
-
-      <p>
-        すでにアカウントがある場合は <Link to="/login">ログイン</Link>
-      </p>
+        <div className="auth-links">
+          <span>すでにアカウントがある場合は <Link to="/login">ログイン</Link></span>
+        </div>
+      </div>
     </div>
   );
 }

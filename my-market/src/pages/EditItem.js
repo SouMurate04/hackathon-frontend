@@ -14,9 +14,9 @@ export default function EditItem() {
     const [description, setDescription] = useState("");
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
+    const [aiState, setAiState] = useState([]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
-    const [error, setError] = useState("");
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -60,13 +60,12 @@ export default function EditItem() {
 
         load().catch((err) => {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         });
     }, [API_BASE_URL, id]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        setError("");
 
         try {
             const token = await fireAuth.currentUser.getIdToken();
@@ -113,7 +112,7 @@ export default function EditItem() {
             navigate(`/item/${id}`);
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
@@ -140,7 +139,7 @@ export default function EditItem() {
             navigate("/");
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
@@ -150,7 +149,7 @@ export default function EditItem() {
         if (!tagName) return;
 
         if (tags.length >= 10) {
-            setError("タグは最大10個までです");
+            alert("タグは最大10個までです");
             return;
         }
 
@@ -163,7 +162,7 @@ export default function EditItem() {
     };
 
     const handleGenerateIntroduction = async () => {
-        setError("");
+        setAiState("紹介文を作っています...");
 
         try {
             const selectedImage = images.find((image) => image);
@@ -194,8 +193,10 @@ export default function EditItem() {
             setC1Id(String(data.c1_id));
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
+
+        setAiState("");
     };
 
     const handleAddImages = (files) => {
@@ -226,78 +227,125 @@ export default function EditItem() {
         });
     };
 
-    if (error) return <p>{error}</p>;
     if (!item) return <p>Loading...</p>;
 
-    return (
-        <div>
-            <h1>商品情報を編集</h1>
+    document.title = `商品編集 | ${item.name} | WhatsOnSale`
 
-            <form onSubmit={handleUpdate}>
-                <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => {
+    return (
+        <div className="item-form-page">
+            <h1 className="item-form-title">商品情報を編集</h1>
+
+            <form className="item-form" onSubmit={handleUpdate}>
+                <section className="item-form-section">
+                <h2>商品画像</h2>
+
+                {images.length === 0 && (
+                    <p className="item-form-help">画像を1枚以上選択してください</p>
+                )}
+
+                <div className="image-edit-grid">
+                    {images.map((image, index) => (
+                    <div className="image-edit-card" key={`${image.previewUrl}-${index}`}>
+                        {index === 0 && <span className="main-image-badge">メイン</span>}
+
+                        <div className="image-edit-preview-wrap">
+                        <img
+                            className="image-edit-preview"
+                            src={image.previewUrl}
+                            alt={`preview-${index + 1}`}
+                        />
+                        </div>
+
+                        <div className="image-edit-actions">
+                        <button
+                            type="button"
+                            className="circle-button"
+                            onClick={() => moveImage(index, -1)}
+                            disabled={index === 0}
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            type="button"
+                            className="circle-button danger"
+                            onClick={() => handleRemoveImage(index)}
+                        >
+                            ×
+                        </button>
+
+                        <button
+                            type="button"
+                            className="circle-button"
+                            onClick={() => moveImage(index, 1)}
+                            disabled={index === images.length - 1}
+                        >
+                            →
+                        </button>
+                        </div>
+                    </div>
+                    ))}
+
+                    <label className="image-add-card">
+                    ＋
+                    <span>画像を追加</span>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => {
                         handleAddImages(e.target.files);
                         e.target.value = "";
-                    }}
-                />
+                        }}
+                    />
+                    </label>
+                </div>
 
-                {images.length === 0 && <p>画像を1枚以上設定してください</p>}
+                <div className="image-section-footer">
+                    <button
+                    className="item-generate-button"
+                    type="button"
+                    onClick={handleGenerateIntroduction}
+                    >
+                    画像から紹介文を生成
+                    </button>
+                </div>
 
-                <ul>
-                    {images.map((image, index) => (
-                        <li key={`${image.previewUrl}-${index}`}>
-                            {index === 0 && <strong>メイン画像</strong>}
+                <p className="item-form-help">{aiState}</p>
+                </section>
 
-                            <img src={image.previewUrl} alt={`preview-${index}`} />
-
-                            <button
-                                type="button"
-                                onClick={() => moveImage(index, -1)}
-                                disabled={index === 0}
-                            >
-                                前へ
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => moveImage(index, 1)}
-                                disabled={index === images.length - 1}
-                            >
-                                後ろへ
-                            </button>
-
-                            <button type="button" onClick={() => handleRemoveImage(index)}>
-                                画像を削除
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-
-                <button type="button" onClick={handleGenerateIntroduction}>
-                    紹介文を生成
-                </button>
-
+                <label className="item-form-field">
+                <span>商品名</span>
                 <input
                     type="text"
+                    placeholder="例: ワイヤレスイヤホン"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
+                </label>
 
+                <label className="item-form-field">
+                <span>価格</span>
                 <input
                     type="text"
+                    placeholder="例: 3000"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                 />
+                </label>
 
-                <input
-                    type="text"
+                <label className="item-form-field">
+                <span>説明</span>
+                <textarea
+                    placeholder="商品の状態や特徴を入力"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
+                </label>
 
+                <div className="item-form-row">
+                <label className="item-form-field">
+                <span>大カテゴリ</span>
                 <select
                     value={c0Id}
                     onChange={(e) => {
@@ -312,7 +360,10 @@ export default function EditItem() {
                         </option>
                     ))}
                 </select>
+                </label>
 
+                <label className="item-form-field">
+                <span>小カテゴリ</span>
                 <select
                     value={c1Id}
                     onChange={(e) => setC1Id(e.target.value)}
@@ -327,34 +378,39 @@ export default function EditItem() {
                             </option>
                         ))}
                 </select>
+                </label></div>
 
-                <div>
+                <section className="item-form-section">
+                <h2>タグ</h2>
+
+                <div className="tag-input-row">
                     <input
-                        type="text"
-                        placeholder="タグを入力"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
+                    type="text"
+                    placeholder="例: 夏の定番"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
                     />
                     <button type="button" onClick={handleAddTag}>
-                        タグを追加
+                    追加
                     </button>
                 </div>
 
-                <div>
+                <div className="tag-edit-list">
                     {tags.map((tag, index) => (
-                        <span key={`${tag}-${index}`}>
-                            #{tag}
-                            <button type="button" onClick={() => handleRemoveTag(index)}>
-                                削除
-                            </button>
-                        </span>
+                    <span className="tag-edit-chip" key={`${tag}-${index}`}>
+                        #{tag}
+                        <button type="button" onClick={() => handleRemoveTag(index)}>
+                        ×
+                        </button>
+                    </span>
                     ))}
                 </div>
+                </section>
 
-                <button type="submit">更新する</button>
+                <button className="item-submit-button" type="submit">更新する</button>
             </form>
 
-            <button type="button" onClick={handleDelete}>
+            <button className="item-delete-button" type="button" onClick={handleDelete}>
                 出品を取り下げる
             </button>
         </div>

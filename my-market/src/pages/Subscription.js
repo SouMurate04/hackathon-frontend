@@ -26,27 +26,58 @@ export default function Subscription() {
         loadItems();
     }, [API_BASE_URL]);
 
-    return (
-        <div>
-            <h1>フォロー中ユーザーの出品</h1>
+    document.title = "仲間の様子 | WhatsOnSale";
 
-            {items.length === 0 ? (
-                <p>フォロー中ユーザーの出品はありません</p>
-            ) : (
-                <ul>
-                    {items.map((item) => (
-                        <li key={item.id}>
-                            <Link to={`/item/${item.id}`}>
-                                <img src={item.image_url} alt={item.name} />
-                                <div>{item.name}</div>
-                                <div>{item.price}円</div>
-                                <div>{item.seller}</div>
-                                <div>{item.c0_name} / {item.c1_name}</div>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
+    return (
+    <div className="subscription-page">
+        <div className="subscription-header">
+        <h1>Meet Your Friends!</h1>
+        <p>フォローしているユーザーが出品中の商品です。</p>
         </div>
+
+        {items.length === 0 ? (
+        <p className="subscription-empty">
+            フォロー中ユーザーの出品はありません
+        </p>
+        ) : (
+        <ul className="item-grid">
+            {items.map((item) => (
+            <li key={item.id} className="item-card">
+                <Link to={`/item/${item.id}`} className="item-card-link">
+                <div className="item-image-wrap">
+                    <img
+                    className="item-image"
+                    src={item.image_url}
+                    alt={item.name}
+                    />
+                </div>
+
+                <div className="item-title">{item.name}</div>
+                <div className="item-price">{item.price}円</div>
+                <div className="item-meta">出品者: {item.seller}</div>
+                <div className="item-meta">
+                    {item.c0_name} / {item.c1_name}
+                </div>
+
+                {item.tags && item.tags.length > 0 && (
+                    <div className="item-tags">
+                    {item.tags.slice(0, 4).map((tag, index) => (
+                        <span className="item-tag" key={`${tag}-${index}`}>
+                        #{tag}
+                        </span>
+                    ))}
+                    {item.tags.length > 4 && (
+                        <span className="item-tag">...</span>
+                    )}
+                    </div>
+                )}
+
+                <div className="item-meta">{item.posted_at}</div>
+                </Link>
+            </li>
+            ))}
+        </ul>
+        )}
+    </div>
     );
 }

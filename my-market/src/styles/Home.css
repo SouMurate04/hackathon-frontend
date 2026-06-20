@@ -81,6 +81,7 @@
 .ai-recommend-input {
   width: 100%;
   min-height: 96px;
+  max-height: 96px;
   padding: 14px;
   box-sizing: border-box;
   border: 1px solid #cccccc;

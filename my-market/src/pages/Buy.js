@@ -135,7 +135,7 @@ export default function Buy(){
                 throw new Error("購入に失敗しました");
             }
 
-            alert("購入に成功しました");
+            alert("購入手続きに成功しました!");
             navigate("/");
         } catch (err) {
             console.error(err);

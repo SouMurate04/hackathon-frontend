@@ -378,3 +378,37 @@
     font-size: 22px;
   }
 }
+
+.subscription-page {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 32px auto 48px;
+  text-align: left;
+}
+
+.subscription-header {
+  margin-bottom: 20px;
+}
+
+.subscription-header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #333333;
+}
+
+.subscription-header p {
+  margin: 8px 0 0;
+  color: #777777;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.subscription-empty {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  color: #777777;
+  font-size: 14px;
+  font-weight: 700;
+}

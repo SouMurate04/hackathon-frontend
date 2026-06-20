@@ -7,13 +7,13 @@ export default function Sell(){
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
-    const [error, setError] = useState("");
     const [categories, setCategories] = useState([]);
     const [c0Id, setC0Id] = useState("");
     const [c1Id, setC1Id] = useState("");
     const [images, setImages] = useState([]);
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
+    const [aiState, setAiState] = useState([]);
     const navigate = useNavigate();
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
@@ -31,7 +31,7 @@ export default function Sell(){
         setCategories(data);
         } catch (err) {
         console.error(err);
-        setError(err.message);
+        alert(err.message);
         }
     };
 
@@ -50,7 +50,6 @@ export default function Sell(){
 
     const handleSell = async (e) => {
         e.preventDefault();
-        setError("");
 
         const priceNum = Number(price);
 
@@ -98,12 +97,12 @@ export default function Sell(){
             navigate("/");
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
     };
 
     const handleGenerateIntroduction = async () => {
-        setError("");
+        setAiState("紹介文を作っています...");
 
         try {
             const selectedImage = images[0];
@@ -134,8 +133,10 @@ export default function Sell(){
             setC1Id(String(data.c1_id));
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            alert(err.message);
         }
+
+        setAiState("");
     };
 
     const handleAddTag = () => {
@@ -144,7 +145,7 @@ export default function Sell(){
         if (!tagName) return;
 
         if (tags.length >= 10) {
-            setError("タグは最大10個までです");
+            alert("タグは最大10個までです");
             return;
         }
 
@@ -174,74 +175,122 @@ export default function Sell(){
         });
     };
 
+    document.title = "出品 | WhatsOnSale "
+
     return(
-        <div>
-            <h1>出品</h1>
-            <form onSubmit={handleSell}>
-            {images.map((image, index) => (
-                <div key={index}>
-                <div>
+        <div className="item-form-page">
+            <h1 className="item-form-title">出品</h1>
+            <form className="item-form" onSubmit={handleSell}>
+                <section className="item-form-section">
+                <h2>商品画像</h2>
+
+                {images.length === 0 && (
+                    <p className="item-form-help">画像を1枚以上選択してください</p>
+                )}
+
+                <div className="image-edit-grid">
+                    {images.map((image, index) => (
+                    <div className="image-edit-card" key={`${image.previewUrl}-${index}`}>
+                        {index === 0 && <span className="main-image-badge">メイン</span>}
+
+                        <div className="image-edit-preview-wrap">
+                        <img
+                            className="image-edit-preview"
+                            src={image.previewUrl}
+                            alt={`preview-${index + 1}`}
+                        />
+                        </div>
+
+                        <div className="image-edit-actions">
+                        <button
+                            type="button"
+                            className="circle-button"
+                            onClick={() => moveImage(index, -1)}
+                            disabled={index === 0}
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            type="button"
+                            className="circle-button danger"
+                            onClick={() => handleRemoveImage(index)}
+                        >
+                            ×
+                        </button>
+
+                        <button
+                            type="button"
+                            className="circle-button"
+                            onClick={() => moveImage(index, 1)}
+                            disabled={index === images.length - 1}
+                        >
+                            →
+                        </button>
+                        </div>
+                    </div>
+                    ))}
+
+                    <label className="image-add-card">
+                    ＋
+                    <span>画像を追加</span>
                     <input
                         type="file"
                         accept="image/*"
                         multiple
                         onChange={(e) => {
-                            handleAddImages(e.target.files);
-                            e.target.value = "";
+                        handleAddImages(e.target.files);
+                        e.target.value = "";
                         }}
                     />
-
-                    {images.length === 0 && <p>画像を1枚以上選択してください</p>}
-
-                    <ul>
-                        {images.map((image, index) => (
-                            <li key={image.previewUrl}>
-                                {index === 0 && <strong>メイン画像</strong>}
-
-                                <img src={image.previewUrl} alt={`preview-${index}`} />
-
-                                <button
-                                    type="button"
-                                    onClick={() => moveImage(index, -1)}
-                                    disabled={index === 0}
-                                >
-                                    前へ
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => moveImage(index, 1)}
-                                    disabled={index === images.length - 1}
-                                >
-                                    後ろへ
-                                </button>
-
-                                <button type="button" onClick={() => handleRemoveImage(index)}>
-                                    画像を削除
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    </label>
                 </div>
+
+                <div className="image-section-footer">
+                    <button
+                    className="item-generate-button"
+                    type="button"
+                    onClick={handleGenerateIntroduction}
+                    >
+                    画像から紹介文を生成
+                    </button>
                 </div>
-            ))}
 
-                <button type="button" onClick={handleGenerateIntroduction}>
-                    紹介文を生成
-                </button>
+                <p className="item-form-help">{aiState}</p>
+                </section>
 
-                <input type="text" placeholder="商品名" value={name}
-                onChange={(e) => setName(e.target.value)}
+                <label className="item-form-field">
+                <span>商品名</span>
+                <input
+                    type="text"
+                    placeholder="例: ワイヤレスイヤホン"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                 />
+                </label>
 
-                <input type="text" placeholder="価格(円)" value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                <label className="item-form-field">
+                <span>価格</span>
+                <input
+                    type="text"
+                    placeholder="例: 3000"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
                 />
+                </label>
 
-                <input type="text" placeholder="説明" value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                <label className="item-form-field">
+                <span>説明</span>
+                <textarea
+                    placeholder="商品の状態や特徴を入力"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                 />
+                </label>
 
+                <div className="item-form-row">
+                <label className="item-form-field">
+                <span>大カテゴリ</span>
                 <select
                     value={c0Id}
                     onChange={(e) => {
@@ -252,50 +301,59 @@ export default function Sell(){
                     <option value="">大カテゴリを選択</option>
                     {categories.map((c0) => (
                         <option key={c0.id} value={c0.id}>
-                        {c0.name}
+                            {c0.name}
                         </option>
                     ))}
                 </select>
+                </label>
 
+                <label className="item-form-field">
+                <span>小カテゴリ</span>
                 <select
                     value={c1Id}
                     onChange={(e) => setC1Id(e.target.value)}
                     disabled={!c0Id}
                 >
                     <option value="">小カテゴリを選択</option>
-                    {categories.find((c0) => String(c0.id) === String(c0Id))?.children.map((c1) => (
-                        <option key={c1.id} value={c1.id}>
-                        {c1.name}
-                        </option>
-                    ))}
+                    {categories
+                        .find((c0) => String(c0.id) === String(c0Id))
+                        ?.children.map((c1) => (
+                            <option key={c1.id} value={c1.id}>
+                                {c1.name}
+                            </option>
+                        ))}
                 </select>
+                </label></div>
 
-                <div>
+                <section className="item-form-section">
+                <h2>タグ</h2>
+
+                <div className="tag-input-row">
                     <input
-                        type="text"
-                        placeholder="タグを入力"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
+                    type="text"
+                    placeholder="例: 夏の定番"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
                     />
                     <button type="button" onClick={handleAddTag}>
-                        タグを追加
+                    追加
                     </button>
                 </div>
 
-                <div>
+                <div className="tag-edit-list">
                     {tags.map((tag, index) => (
-                        <span key={`${tag}-${index}`}>
-                            #{tag}
-                            <button type="button" onClick={() => handleRemoveTag(index)}>
-                                削除
-                            </button>
-                        </span>
+                    <span className="tag-edit-chip" key={`${tag}-${index}`}>
+                        #{tag}
+                        <button type="button" onClick={() => handleRemoveTag(index)}>
+                        ×
+                        </button>
+                    </span>
                     ))}
                 </div>
+                </section>
 
-                <button type="submit">出品</button>
+                <button className="item-submit-button" type="submit">出品</button>
             </form>
-            {error && <p>{error}</p>}
         </div>
     );
 

@@ -1,8 +1,13 @@
 import './styles/App.css';
+import './styles/Authentication.css';
 import './styles/Header.css';
 import './styles/Home.css'
 import './styles/Item.css';
 import './styles/UserPage.css';
+import './styles/Chat.css';
+import './styles/SellEdit.css'
+import './styles/EditProfile.css';
+import './styles/Notification.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";

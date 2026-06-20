@@ -33,22 +33,38 @@ export default function NotificationAll() {
     }, [API_BASE_URL]);
 
     return (
-        <div>
-            <h1>通知</h1>
+    <div className="notification-page">
+        <h1 className="notification-title">通知</h1>
 
-            {error && <p>{error}</p>}
+        {error && <p className="notification-error">{error}</p>}
 
-            <ul>
-                {notifications.map((notification) => (
-                    <li key={notification.id}>
-                        <Link to={`/notification/${notification.id}`}>
-                            {!notification.is_read && <strong>未読 </strong>}
-                            <span>{notification.title}</span>
-                            <div>{new Date(notification.timestamp).toLocaleString()}</div>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        {notifications.length === 0 ? (
+        <p className="notification-empty">通知はありません</p>
+        ) : (
+        <ul className="notification-list">
+            {notifications.map((notification) => (
+            <li key={notification.id} className="notification-list-item">
+                <Link
+                to={`/notification/${notification.id}`}
+                className="notification-link"
+                >
+                <div className="notification-left">
+                    {!notification.is_read && (
+                    <span className="notification-unread-badge">未読</span>
+                    )}
+                    <span className="notification-list-title">
+                    {notification.title}
+                    </span>
+                </div>
+
+                <time className="notification-time">
+                    {new Date(notification.timestamp).toLocaleString()}
+                </time>
+                </Link>
+            </li>
+            ))}
+        </ul>
+        )}
+    </div>
     );
 }

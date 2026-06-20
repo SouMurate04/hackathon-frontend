@@ -23,22 +23,38 @@ export default function FollowList({ type }) {
     }, [API_BASE_URL, id, isFollowers]);
 
     return (
-        <div>
-            <h1>{isFollowers ? "フォロワー" : "フォロー中"}</h1>
+    <div className="follow-list-page">
+        <h1 className="follow-list-title">
+        {isFollowers ? "フォロワー" : "フォロー中"}
+        </h1>
 
-            <ul>
-                {users.map((user) => (
-                    <li key={user.id}>
-                        <Link to={`/user/${user.id}`}>
-                            {user.icon_url && (
-                                <img src={user.icon_url} alt={user.name || "user"} />
-                            )}
-                            <div>{user.name}</div>
-                            <div>{user.bio}</div>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        {users.length === 0 ? (
+        <p className="follow-list-empty">
+            {isFollowers ? "フォロワーはいません" : "フォロー中のユーザーはいません"}
+        </p>
+        ) : (
+        <ul className="follow-user-grid">
+            {users.map((user) => (
+            <li key={user.id} className="follow-user-card">
+                <Link to={`/user/${user.id}`} className="follow-user-link">
+                <img
+                    className="follow-user-icon"
+                    src={user.icon_url}
+                    alt={user.name || "user"}
+                />
+
+                <div className="follow-user-name">
+                    {user.name || "ユーザー"}
+                </div>
+
+                <p className="follow-user-bio">
+                    {user.bio || "自己紹介はまだありません"}
+                </p>
+                </Link>
+            </li>
+            ))}
+        </ul>
+        )}
+    </div>
     );
 }

@@ -218,7 +218,7 @@ export default function ItemPage(){
                     <div className="item-detail-actions">
                         <Link className="item-action-button chat" to={`/item/${id}/chat`}>
                             <img className="item-action-icon" src={chatIcon} alt="" />
-                            チャットを見る
+                            交渉に行く
                         </Link>
 
                         <button
@@ -233,7 +233,7 @@ export default function ItemPage(){
                         </button>
 
                         {item.buyer_id ? (
-                            <p className="item-sold-message">この商品は購入済みです</p>
+                            <p className="item-sold-message">この商品は売却済みです</p>
                         ) : isSeller ? (
                             <Link className="item-action-button primary" to={`/item/${id}/edit`}>
                                 商品情報を編集

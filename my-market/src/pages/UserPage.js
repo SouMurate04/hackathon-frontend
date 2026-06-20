@@ -295,7 +295,6 @@ export default function UserPage(){
                 </div>
             </section>
 
-            <h1>商品一覧</h1>
             <section className="user-items-section">
                 <div className="user-tabs">
                     {tabs.map((tab) => (
