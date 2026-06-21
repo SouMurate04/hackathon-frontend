@@ -1,7 +1,7 @@
 import appLogo from "../images/AppLogo.png";
 import bellIcon from "../images/Bell.png";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -21,37 +21,63 @@ export default function Header() {
 
   const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
+  const loadHeaderData = useCallback(async () => {
+    const user = fireAuth.currentUser;
+
+    if (!user) {
+      setCurrentUserProfile(null);
+      setUnreadCount(0);
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken();
+
+      const profileRes = await fetch(`${REACT_APP_API_BASE_URL}/user/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        setCurrentUserProfile(profile);
+      }
+
+      const unreadRes = await fetch(`${REACT_APP_API_BASE_URL}/notification/unread-count`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (unreadRes.ok) {
+        const data = await unreadRes.json();
+        setUnreadCount(data.unread_count);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [REACT_APP_API_BASE_URL]);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(fireAuth, async (user) => {
+    const unsubscribe = onAuthStateChanged(fireAuth, (user) => {
       setLoginUser(user);
       setIsUserMenuOpen(false);
 
       if (!user) {
         setCurrentUserProfile(null);
         setUnreadCount(0);
-        return;
-      }
-
-      try {
-        const token = await user.getIdToken();
-
-        const response = await fetch(`${REACT_APP_API_BASE_URL}/user/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) return;
-
-        const profile = await response.json();
-        setCurrentUserProfile(profile);
-      } catch (err) {
-        console.error(err);
       }
     });
 
     return unsubscribe;
-  }, [REACT_APP_API_BASE_URL]);
+  }, []);
+
+  useEffect(() => {
+    if (!loginUser) return;
+
+    loadHeaderData();
+  }, [loginUser, location.key, loadHeaderData]);
 
   const handleMyPage = () => {
     if (!currentUserProfile) {
@@ -86,27 +112,6 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-      const loadUnreadCount = async () => {
-          if (!fireAuth.currentUser) return;
-
-          const token = await fireAuth.currentUser.getIdToken();
-
-          const res = await fetch(`${REACT_APP_API_BASE_URL}/notification/unread-count`, {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-              },
-          });
-
-          if (!res.ok) return;
-
-          const data = await res.json();
-          setUnreadCount(data.unread_count);
-      };
-
-      loadUnreadCount();
-  }, [REACT_APP_API_BASE_URL]);
 
   const handleSearch = (e) => {
     e.preventDefault();
