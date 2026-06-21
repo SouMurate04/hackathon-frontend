@@ -116,7 +116,7 @@
 }
 
 .user-items-section {
-  width: min(1120px, calc(100vw - 48px));
+  width: min(1220px, calc(100vw - 48px));
   margin: 24px auto 40px;
 }
 

@@ -1,5 +1,5 @@
 .item-grid {
-  width: min(1120px, calc(100vw - 48px));
+  width: min(1220px, calc(100vw - 48px));
   margin: 24px auto;
   padding: 0;
   display: flex;
